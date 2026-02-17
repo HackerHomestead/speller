@@ -1,0 +1,12 @@
+build/
+*.o
+*.a
+*.so
+*.dylib
+build/spell
+build/spell_tests
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store

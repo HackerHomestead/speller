@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-**spell** is an offline spell checker and definition tool designed for neurodivergent users. It runs in the terminal and supports:
+**spell** is an offline spell checker and definition tool designed for neurodivergent users. As of **v0.4.0 (MVP)**, it runs in the terminal with:
 
 - **Interactive mode** — Step through text word-by-word, choose corrections, skip, undo, or look up definitions
 - **Stream mode** — Read from stdin or a file, output corrected text to stdout
@@ -72,7 +72,42 @@ spell --help                   # Show all options
 
 ---
 
-## 4. Dictionaries
+## 4. How the dictionary is loaded
+
+You can set the dictionary in three ways (first one wins):
+
+1. **Default** — If the project was built with a bundled dict, `spell` uses `data/dict` (en_US). So running `spell` or `spell --check hello` from the project root uses it without any options.
+
+2. **Config file** — Put defaults in a file in your home directory so you don’t need to pass paths every time:
+   - **`~/.config/spell/config`** (preferred), or
+   - **`~/.spellrc`**
+
+   Example `~/.config/spell/config`:
+
+   ```
+   dict_dir=/usr/share/hunspell
+   user_dict=/home/me/.config/spell/user.dic
+   ```
+
+   You can use either a **directory** that contains `.aff` and `.dic` files, or the **path to a `.aff` file** (e.g. `dict_dir=/path/to/data/dict/en_US.aff`). Create the file and directory if needed:
+   ```bash
+   mkdir -p ~/.config/spell
+   cp docs/spell-config.example ~/.config/spell/config
+   # Edit ~/.config/spell/config and set dict_dir to your dict path
+   ```
+
+3. **Command line** — Override for one run:
+   ```bash
+   spell --dict-dir /usr/share/hunspell
+   spell --dict-dir ./data/dict/en_US.aff
+   spell --check hello --dict-dir data/dict
+   ```
+
+**Summary:** Use the config file for your usual dictionary and user dict; use `--dict-dir` when you want to point to a different path for a single run.
+
+---
+
+## 5. Dictionaries (file format)
 
 spell uses Hunspell dictionary files:
 
@@ -93,7 +128,7 @@ Common sources:
 
 ---
 
-## 5. Interactive REPL Mode
+## 6. Interactive REPL Mode
 
 Run `spell` with no arguments to enter the REPL:
 
@@ -118,7 +153,11 @@ spell> :q
 | Command | Action |
 |---------|--------|
 | `help`, `?` | Show help with examples |
+| `load PATH`, `:load PATH` | Load dictionary from PATH (dir with .aff, .dic) |
+| `dict` | Show current dictionary path |
 | `quit`, `exit`, `:q` | Exit the REPL |
+
+**Default:** Bundled `en_US` dictionary (`data/dict/`) is used when no `--dict-dir` is given.
 
 ### REPL Tips
 
@@ -129,7 +168,7 @@ spell> :q
 
 ---
 
-## 6. Stream Mode
+## 7. Stream Mode
 
 *(Phase 5 — not yet implemented)*
 
@@ -140,13 +179,13 @@ spell> :q
 
 ---
 
-## 7. User Dictionary
+## 8. User Dictionary
 
 Custom words can be added to a user dictionary so they are treated as correct. Use `--user-dict PATH` to specify a file with one word per line. Lines starting with `#` are ignored.
 
 ---
 
-## 8. Accessibility
+## 9. Accessibility
 
 The design prioritizes:
 
@@ -158,15 +197,19 @@ The design prioritizes:
 
 ---
 
-## 9. Troubleshooting
+## 10. Troubleshooting
 
 ### "Dictionary not found"
 - Ensure `--dict-dir` points to a directory with `.aff` and `.dic` files
 - Check file names match (e.g. `en_US.aff` and `en_US.dic`)
 
-### "Could not load dictionary"
-- Install **libhunspell-dev** (build) and **hunspell-en-us** (runtime)
-- Run `cmake ..` and check output: `Hunspell: YES` means spell check is enabled
+### "(no dictionary)" or "Spell checking is disabled"
+- If the message says **"this build was compiled without Hunspell"**: install **libhunspell-dev** (Debian/Ubuntu), then **rebuild** (`cmake .. && cmake --build .`). Config and `--dict-dir` cannot enable spell check when Hunspell was not linked at build time.
+- Run `spell --version` and check for "Hunspell: enabled". If it says "disabled", rebuild with Hunspell installed.
+
+### "Could not load dictionary" (Hunspell enabled but path wrong)
+- Install **hunspell-en-us** (or put `.aff`/`.dic` in a directory) and set **dict_dir** in `~/.config/spell/config` or use `--dict-dir`
+- Ensure the path points to a directory containing `.aff` and `.dic`, or to a `.aff` file
 
 ### Build fails
 - See [DEPENDENCIES.md](DEPENDENCIES.md) for required packages
@@ -174,6 +217,6 @@ The design prioritizes:
 
 ---
 
-## 10. Version History
+## 11. Version History
 
-See [CHANGELOG.md](../CHANGELOG.md) for release notes.
+- **0.4.0 (MVP)** — Bundled Hunspell (static), config file, REPL by default, single-word check. See [CHANGELOG.md](../CHANGELOG.md) for full release notes.

@@ -175,7 +175,7 @@ speller/
 | # | Task | Status |
 |---|------|--------|
 | 6.1 | Measure memory/CPU on target hardware | ⬜ |
-| 6.2 | Build with LTO, strip, static linking options | ⬜ |
+| 6.2 | Build with LTO, strip, static linking options | ✅ (Hunspell static) |
 | 6.3 | Trim dictionary/definition sizes if needed | ⬜ |
 
 ---
@@ -200,11 +200,17 @@ speller/
 See **[docs/DEPENDENCIES.md](docs/DEPENDENCIES.md)** for full details and package names.
 
 - **Required**: C++17 compiler, CMake 3.14+, Git (for FetchContent)
-- **Optional**: Hunspell (libhunspell-dev / hunspell-devel) — spell checking
+- **Bundled**: Hunspell (FetchContent, built as static lib — no system install)
 - **Optional**: Readline (libreadline-dev) — REPL autocomplete, history
-- **FetchContent**: Catch2 (auto-fetched)
+- **FetchContent**: Hunspell v1.7.2, Catch2 (auto-fetched)
 
 Optional later: ncurses, SQLite (for definition DB).
+
+---
+
+## MVP (v0.4.0)
+
+Core spell checker is **MVP complete**: REPL by default, `--check`, config file, bundled dictionary, Hunspell statically linked.
 
 ---
 

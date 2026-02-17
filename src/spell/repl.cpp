@@ -1,5 +1,6 @@
 #include "spell/repl.hpp"
 #include "spell/hunspell_engine.hpp"
+#include "util/dict_path.hpp"
 #include <iostream>
 #include <algorithm>
 #include <cctype>
@@ -21,6 +22,9 @@ const char* repl_help =
     "  Type a word and press Enter to check spelling.\n"
     "  Commands (start with : or use full name):\n\n"
     "    help, ?        Show this help\n"
+    "    load PATH      Load dictionary (PATH = dir or path to .aff file)\n"
+    "    :load PATH     Same as load\n"
+    "    dict           Show current dictionary path\n"
     "    quit, exit     Exit the REPL\n"
     "    :q             Shortcut to quit\n\n"
     "  Examples:\n\n"
@@ -28,19 +32,24 @@ const char* repl_help =
     "    OK\n\n"
     "    spell> helo\n"
     "    Did you mean: hello?\n\n"
+    "    spell> load /usr/share/hunspell\n"
+    "    Loaded dictionary: /usr/share/hunspell (en_US)\n\n"
+    "    spell> load ./data/dict/en_US.aff\n"
+    "    Loaded dictionary: ./data/dict (en_US)\n\n"
     "    spell> help\n"
     "    (shows this help)\n\n"
     "    spell> :q\n"
     "    (exits)\n\n"
     "  Tips:\n"
-    "  - Tab completes commands (help, quit, :q)\n"
+    "  - Tab completes commands (help, load, quit, :q)\n"
     "  - Up/Down for command history\n"
+    "  - Default: bundled en_US dictionary\n"
     "  - Empty line does nothing\n\n";
 
 const char* prompt = "spell> ";
 
 #ifdef SPELL_HAS_READLINE
-const char* repl_commands[] = {"help", "?", "quit", "exit", ":q", nullptr};
+const char* repl_commands[] = {"help", "?", "load", ":load", "dict", "quit", "exit", ":q", nullptr};
 
 char* repl_command_generator(const char* text, int state) {
   static size_t i;
@@ -86,12 +95,34 @@ bool is_help_command(const std::string& line) {
   return lower == "help" || lower == "?" || lower == ":help";
 }
 
+bool is_load_command(const std::string& line, std::string& out_path) {
+  std::string t = trim(line);
+  if (t.empty()) return false;
+  std::string lower = to_lower(t);
+  if (lower.size() >= 5 && lower.substr(0, 5) == "load ") {
+    out_path = trim(t.substr(5));
+    return !out_path.empty();
+  }
+  if (lower.size() >= 6 && lower.substr(0, 6) == ":load ") {
+    out_path = trim(t.substr(6));
+    return !out_path.empty();
+  }
+  return false;
+}
+
+bool is_dict_command(const std::string& line) {
+  return to_lower(trim(line)) == "dict";
+}
+
 std::string extract_word(const std::string& line) {
   std::string t = trim(line);
   if (t.empty()) return "";
   if (t[0] == ':') return "";
   std::string lower = to_lower(t);
   if (lower == "help" || lower == "?" || lower == "quit" || lower == "exit" || lower == "q") return "";
+  if (lower == "dict") return "";
+  if (lower.size() >= 5 && lower.substr(0, 5) == "load ") return "";
+  if (lower.size() >= 6 && lower.substr(0, 6) == ":load ") return "";
   if (lower.size() >= 5 && lower.substr(0, 5) == "check") {
     return trim(t.substr(5));
   }
@@ -101,15 +132,30 @@ std::string extract_word(const std::string& line) {
 }  // namespace
 
 int run_repl(const ReplConfig& config) {
-  std::string dict_dir = config.dict_dir.empty() ? "/usr/share/hunspell" : config.dict_dir;
-  auto engine = HunspellEngine::create(dict_dir, "en_US", config.user_dict_path);
+#ifndef SPELL_DEFAULT_DICT_DIR
+#define SPELL_DEFAULT_DICT_DIR "data/dict"
+#endif
+  std::string raw_dict = config.dict_dir.empty() ? SPELL_DEFAULT_DICT_DIR : config.dict_dir;
+  auto parsed = parse_dict_path(raw_dict);
+  std::string dict_dir = parsed.first.empty() ? SPELL_DEFAULT_DICT_DIR : parsed.first;
+  std::string dict_base = parsed.second;
+  std::string user_dict = config.user_dict_path;
+  auto engine = HunspellEngine::create(dict_dir, dict_base, user_dict);
 
   if (!engine->is_loaded()) {
-    std::cout << "spell: Could not load dictionary.\n";
-    std::cout << "  Try: spell --dict-dir /path/to/dict\n";
-    std::cout << "  Or:  spell --dict-dir " << dict_dir << "\n\n";
+#ifndef SPELL_HAS_HUNSPELL
+    std::cout << "spell: Spell checking is disabled — this build was compiled without Hunspell.\n";
+    std::cout << "  Install libhunspell-dev (or equivalent), then rebuild spell to enable checking.\n\n";
+#else
+    std::cout << "spell: Could not load dictionary from " << dict_dir << "\n";
+    std::cout << "  Try: load /path/to/dict  (in REPL)\n";
+    std::cout << "  Or:  spell --dict-dir /path/to/dict\n";
+    std::cout << "  Config: ~/.config/spell/config or ~/.spellrc with dict_dir=/path/to/dict\n\n";
+#endif
     std::cout << "  Starting REPL without spell check (type 'help' for commands).\n\n";
     engine.reset();
+  } else {
+    std::cout << "Dictionary: " << dict_dir << " (en_US)\n";
   }
 
   std::cout << "spell - Interactive spell checker (type 'help' or '?' for help)\n\n";
@@ -153,11 +199,43 @@ int run_repl(const ReplConfig& config) {
       continue;
     }
 
+    std::string load_path;
+    if (is_load_command(line, load_path)) {
+      auto parsed = parse_dict_path(load_path);
+      if (parsed.first.empty()) {
+        std::cout << "Invalid path.\n";
+        continue;
+      }
+      engine = HunspellEngine::create(parsed.first, parsed.second, user_dict);
+      if (engine->is_loaded()) {
+        dict_dir = parsed.first;
+        dict_base = parsed.second;
+        std::cout << "Loaded dictionary: " << dict_dir << " (" << dict_base << ")\n";
+      } else {
+        std::cout << "Could not load dictionary from " << load_path << "\n";
+        engine.reset();
+      }
+      continue;
+    }
+
+    if (is_dict_command(line)) {
+      if (engine && engine->is_loaded()) {
+        std::cout << "Dictionary: " << dict_dir << " (" << dict_base << ")\n";
+      } else {
+        std::cout << "No dictionary loaded. Use 'load PATH' to load one.\n";
+      }
+      continue;
+    }
+
     std::string word = extract_word(line);
     if (word.empty()) continue;
 
     if (!engine) {
-      std::cout << "(no dictionary - use --dict-dir to enable spell check)\n";
+#ifndef SPELL_HAS_HUNSPELL
+      std::cout << "(spell check unavailable — build has no Hunspell; install libhunspell-dev and rebuild)\n";
+#else
+      std::cout << "(no dictionary — use 'load PATH', --dict-dir, or set dict_dir in ~/.config/spell/config)\n";
+#endif
       continue;
     }
 

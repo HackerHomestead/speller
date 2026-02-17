@@ -2,6 +2,7 @@
 #include "spell/repl.hpp"
 #include "spell/suggestion_orchestrator.hpp"
 #include "util/config.hpp"
+#include "util/dict_path.hpp"
 #include <iostream>
 #include <cstdlib>
 
@@ -10,29 +11,35 @@ namespace {
 const char* help_text =
     "spell - Offline spell checker and definition tool\n"
     "\n"
-    "Usage: spell [options]     Run with no args for interactive REPL\n"
+    "Usage: spell [options]     No args = interactive REPL\n"
+    "\n"
+    "Dictionary (default: bundled en_US, or set in config):\n"
+    "  Config file:  ~/.config/spell/config  or  ~/.spellrc\n"
+    "    dict_dir=/path/to/dict   (or path to a .aff file)\n"
+    "    user_dict=/path/to/user.dic\n"
+    "  CLI:  --dict-dir PATH   (directory or path to .aff file)\n"
     "\n"
     "Options:\n"
-    "  (no args)        Interactive REPL (default)\n"
-    "  --interactive    Same as default\n"
-    "  --stream         Stream mode: read from stdin/file, write to stdout\n"
-    "  --file PATH      Read from file (implies --stream)\n"
-    "  --check WORD     Check a single word and show suggestions\n"
-    "  --dict-dir PATH  Dictionary directory (.aff, .dic files)\n"
-    "  --user-dict PATH User dictionary (one word per line)\n"
-    "  --defs PATH      Definition database path\n"
-    "  --fast           Auto-apply top suggestion in stream mode\n"
-    "  --careful        Prompt when confidence is low (default)\n"
+    "  (no args)        Interactive REPL\n"
+    "  --check WORD     Check one word\n"
+    "  --dict-dir PATH  Dictionary dir or .aff file\n"
+    "  --user-dict PATH User dictionary\n"
+    "  --file PATH      Read from file\n"
     "  -h, --help       Show this help\n"
-    "  -V, --version    Show version and build info\n";
+    "  -V, --version    Version and build info\n";
 
 int run_spell(const spell::Config& config) {
   // --check: quick single-word check (requires --dict-dir)
   if (!config.check_word.empty()) {
-    std::string dict_dir = config.dict_dir.empty() ? "/usr/share/hunspell" : config.dict_dir;
-    auto engine = spell::HunspellEngine::create(dict_dir, "en_US", config.user_dict_path);
+#ifndef SPELL_DEFAULT_DICT_DIR
+#define SPELL_DEFAULT_DICT_DIR "data/dict"
+#endif
+    std::string raw_dict = config.dict_dir.empty() ? SPELL_DEFAULT_DICT_DIR : config.dict_dir;
+    auto parsed = spell::parse_dict_path(raw_dict);
+    if (parsed.first.empty()) parsed.first = SPELL_DEFAULT_DICT_DIR;
+    auto engine = spell::HunspellEngine::create(parsed.first, parsed.second, config.user_dict_path);
     if (!engine->is_loaded()) {
-      std::cerr << "spell: Could not load dictionary from " << dict_dir << "\n";
+      std::cerr << "spell: Could not load dictionary from " << parsed.first << "\n";
       return 1;
     }
     if (engine->is_correct(config.check_word)) {

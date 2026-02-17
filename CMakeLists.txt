@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(spell VERSION 0.2.0 LANGUAGES CXX)
+project(spell VERSION 0.4.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -17,27 +17,9 @@ message(STATUS "  C++ compiler:    ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER
 # Required: CMake
 message(STATUS "  CMake:            ${CMAKE_VERSION} (min 3.14)")
 
-# Optional: Hunspell
-find_package(PkgConfig QUIET)
-if(PkgConfig_FOUND)
-  pkg_check_modules(HUNSPELL QUIET hunspell)
-endif()
-if(NOT HUNSPELL_FOUND)
-  find_path(HUNSPELL_INCLUDE_DIR NAMES hunspell/hunspell.hxx)
-  find_library(HUNSPELL_LIBRARY NAMES hunspell)
-  if(HUNSPELL_INCLUDE_DIR AND HUNSPELL_LIBRARY)
-    set(HUNSPELL_FOUND TRUE)
-    set(HUNSPELL_INCLUDE_DIRS ${HUNSPELL_INCLUDE_DIR})
-    set(HUNSPELL_LIBRARIES ${HUNSPELL_LIBRARY})
-  endif()
-endif()
-if(HUNSPELL_FOUND)
-  message(STATUS "  Hunspell:         YES (${HUNSPELL_LIBRARIES})")
-  set(SPELL_HUNSPELL_STATUS "enabled")
-else()
-  message(STATUS "  Hunspell:         NO  (optional - install libhunspell-dev)")
-  set(SPELL_HUNSPELL_STATUS "disabled")
-endif()
+# Hunspell: vendored via FetchContent, built as static lib (no system dependency)
+message(STATUS "  Hunspell:         bundled (static)")
+set(SPELL_HUNSPELL_STATUS "enabled")
 
 # Optional: readline (REPL autocomplete, history)
 if(PkgConfig_FOUND)
@@ -63,8 +45,22 @@ message(STATUS "----------------------------------------")
 message(STATUS "  Spell checking:   ${SPELL_HUNSPELL_STATUS}")
 message(STATUS "")
 
-# Catch2 for tests
 include(FetchContent)
+
+# Hunspell: vendored for static linking (no system libhunspell required)
+FetchContent_Declare(
+  hunspell_src
+  GIT_REPOSITORY https://github.com/hunspell/hunspell.git
+  GIT_TAG        v1.7.2
+)
+FetchContent_GetProperties(hunspell_src)
+if(NOT hunspell_src_POPULATED)
+  FetchContent_Populate(hunspell_src)
+endif()
+set(HUNSPELL_SOURCE_DIR ${hunspell_src_SOURCE_DIR})
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/hunspell ${CMAKE_CURRENT_BINARY_DIR}/third_party/hunspell)
+
+# Catch2 for tests
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
@@ -80,28 +76,28 @@ add_library(spell_lib
   src/spell/suggestion_orchestrator.cpp
   src/spell/repl.cpp
   src/util/config.cpp
+  src/util/dict_path.cpp
 )
 target_include_directories(spell_lib
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-if(HUNSPELL_FOUND)
-  target_include_directories(spell_lib PRIVATE ${HUNSPELL_INCLUDE_DIRS})
-  target_link_libraries(spell_lib PRIVATE ${HUNSPELL_LIBRARIES})
-  target_compile_definitions(spell_lib PRIVATE SPELL_HAS_HUNSPELL=1)
-endif()
+target_link_libraries(spell_lib PRIVATE hunspell::hunspell)
+target_compile_definitions(spell_lib PRIVATE SPELL_HAS_HUNSPELL=1)
 if(READLINE_FOUND)
   target_link_libraries(spell_lib PRIVATE ${READLINE_LIBRARIES})
   target_compile_definitions(spell_lib PRIVATE SPELL_HAS_READLINE=1)
 endif()
+target_compile_definitions(spell_lib PRIVATE
+  SPELL_DEFAULT_DICT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data/dict")
 
 # Main executable
 add_executable(spell src/main.cpp)
 target_link_libraries(spell PRIVATE spell_lib)
-target_compile_definitions(spell PRIVATE SPELL_VERSION="${PROJECT_VERSION}")
-if(HUNSPELL_FOUND)
-  target_compile_definitions(spell PRIVATE SPELL_HAS_HUNSPELL=1)
-endif()
+target_compile_definitions(spell PRIVATE
+  SPELL_VERSION="${PROJECT_VERSION}"
+  SPELL_DEFAULT_DICT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data/dict"
+  SPELL_HAS_HUNSPELL=1)
 
 # Tests
 add_executable(spell_tests
@@ -123,10 +119,8 @@ target_include_directories(spell_tests PRIVATE
 target_compile_definitions(spell_tests PRIVATE
   SPELL_DICT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data/dict"
   SPELL_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
-  SPELL_BINARY="${CMAKE_CURRENT_BINARY_DIR}/spell")
-if(HUNSPELL_FOUND)
-  target_compile_definitions(spell_tests PRIVATE SPELL_HAS_HUNSPELL=1)
-endif()
+  SPELL_BINARY="${CMAKE_CURRENT_BINARY_DIR}/spell"
+  SPELL_HAS_HUNSPELL=1)
 
 include(CTest)
 enable_testing()

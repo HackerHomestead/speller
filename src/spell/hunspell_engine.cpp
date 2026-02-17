@@ -26,7 +26,7 @@ std::unique_ptr<HunspellEngine> HunspellEngine::create(const std::string& dict_d
   }
 
   try {
-    engine->hunspell_ = std::make_unique<Hunspell>(aff_path.c_str(), dic_path.c_str());
+    engine->hunspell_ = std::make_unique<::Hunspell>(aff_path.c_str(), dic_path.c_str());
 
     // Load user dictionary
     if (!user_dict_path.empty()) {

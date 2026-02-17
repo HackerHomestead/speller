@@ -9,7 +9,7 @@
 | `[suggestion_orchestrator]` | Suggestion merging and ranking |
 | `[config]` | Config parsing |
 | `[cli]` | CLI flags (--help, --version) |
-| `[hunspell_engine]` | HunspellEngine (requires libhunspell-dev) |
+| `[hunspell_engine]` | HunspellEngine (Hunspell is bundled; tests always run) |
 | `[functional]` | End-to-end spell binary tests |
 | `[fuzz]` | Fuzz and stress tests |
 | `[dyslexic]` | Dyslexic-like misspellings (actual typos) |
@@ -30,7 +30,7 @@
 These are **actual misspellings** derived from correct words. The test verifies:
 
 1. No crash on any input
-2. (With Hunspell) Suggestions often include the original correct word
+2. Suggestions often include the original correct word
 
 ### Fuzz Words (`[fuzz][fuzzing]`)
 
@@ -43,5 +43,5 @@ These are **actual misspellings** derived from correct words. The test verifies:
 ./spell_tests "[fuzz]"           # Fuzz tests only
 ./spell_tests "[dyslexic]"      # Dyslexic misspelling tests
 ./spell_tests "[fuzzing]"       # Random fuzz tests
-./spell_tests "[hunspell]"      # Hunspell tests (skip if not built with Hunspell)
+./spell_tests "[hunspell]"      # Hunspell engine tests
 ```

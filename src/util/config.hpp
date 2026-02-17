@@ -18,7 +18,11 @@ struct Config {
   bool help_requested = false;  // --help or -h
   bool version_requested = false;  // --version or -V
 
+  /// Load defaults from config file, then override with argv.
   static Config from_args(int argc, char* argv[]);
+
+  /// Path to config file (for display). Empty if none loaded.
+  std::string config_file_path;
 };
 
 }  // namespace spell

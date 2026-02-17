@@ -2,6 +2,8 @@
 
 Offline spell checker and lightweight definition tool for neurodivergent users (ADHD, dyslexia, dysgraphia). Designed for embedded Linux and the vibePDA project.
 
+**MVP (v0.4.0):** Interactive REPL, single-word check, config-file defaults, and Hunspell bundled as a static library — no system spell libs required.
+
 ## Quick Start
 
 ### Build
@@ -17,7 +19,7 @@ cmake --build .
 ```bash
 ./spell                                           # Interactive REPL (default)
 ./spell --help                                    # Show options
-./spell --check hello --dict-dir ../data/dict     # Quick word check
+./spell --check hello                            # Quick word check (uses bundled dict)
 ./spell_tests                                     # Run unit + functional tests
 ```
 
@@ -29,9 +31,10 @@ In the REPL: type a word to check, `help` for commands, `:q` to quit.
 |------------|----------|-------------------------|
 | C++17 compiler | Yes | `build-essential` |
 | CMake 3.14+ | Yes | `cmake` |
+| Git | Yes (fetch deps) | `git` |
+| Hunspell | Bundled (static) | Fetched at configure; no system install |
 | Catch2 | Yes (auto-fetched) | — |
-| Hunspell | No (spell check) | `libhunspell-dev` |
-| Hunspell dicts | No (bundled in `data/dict/`) | `hunspell-en-us` for full coverage |
+| Dictionaries | No (minimal en_US in `data/dict/`) | `hunspell-en-us` for full coverage |
 
 **Full details:** [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md)
 
@@ -43,8 +46,8 @@ In the REPL: type a word to check, `help` for commands, `:q` to quit.
 | `--check WORD` spell check | ✅ |
 | Hunspell integration | ✅ |
 | User dictionary (`--user-dict`) | ✅ |
-| Interactive mode (stub) | ✅ |
-| Stream mode (stub) | ✅ |
+| Interactive REPL (default) | ✅ |
+| Stream mode | 🔲 Phase 5 |
 | Definition lookup | 🔲 Phase 4 |
 | Full TUI | 🔲 Phase 5 |
 

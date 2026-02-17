@@ -1,0 +1,15 @@
+# spell config file
+# Copy to ~/.config/spell/config  or  ~/.spellrc
+# Lines starting with # are comments.
+
+# Dictionary: directory containing .aff and .dic, or path to a .aff file
+dict_dir=/usr/share/hunspell
+# Or for bundled dict (adjust path to your install):
+# dict_dir=/path/to/speller/data/dict
+# dict_dir=/path/to/speller/data/dict/en_US.aff
+
+# Optional: personal dictionary (one word per line)
+# user_dict=/home/me/.config/spell/user.dic
+
+# Optional: max suggestions to show (default 5)
+# max_suggestions=5

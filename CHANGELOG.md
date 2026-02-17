@@ -10,6 +10,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - (Phase 2) User dictionary add/learn from interactive mode
 
+## [0.4.0] - 2026-02-17 — MVP
+
+**MVP status:** Spell checker is feature-complete for core use: interactive REPL, single-word check, bundled dictionary, config-file defaults, and statically linked Hunspell with no system dependency.
+
+### Added
+- **Vendored Hunspell**: Hunspell is fetched at configure time (v1.7.2) and built as a static library; no system `libhunspell-dev` required. Enables static linking and works on minimal Linux installs.
+- **Config file**: Defaults from `~/.config/spell/config` or `~/.spellrc` (`dict_dir`, `user_dict`, `max_suggestions`). CLI overrides config.
+- **Dict path parsing**: `--dict-dir` and REPL `load` accept either a directory or a path to a `.aff` file; shared logic in `util/dict_path`.
+- **Clearer messages**: When built without Hunspell (N/A now that it’s bundled) or when dictionary fails to load, messages point to config file and `--dict-dir`.
+
+### Changed
+- Hunspell is always enabled (bundled); removed optional `find_package(Hunspell)`.
+- REPL startup parses initial `dict_dir` from config (e.g. `dict_dir=/path/to/en_US.aff`).
+
+### Documentation
+- **docs/MANUAL.md**: New section “How the dictionary is loaded” (default, config file, CLI); troubleshooting for “no dictionary” and config.
+- **docs/DEPENDENCIES.md**: Hunspell described as bundled (static); quick-install no longer requires `libhunspell-dev`.
+- **docs/spell-config.example**: Example config for `~/.config/spell/config`.
+- **README.md**, **PLAN.md**, **tests/README.md**: Updated for vendored Hunspell and MVP.
+
+## [0.3.1] - 2025-02-17
+
+### Added
+- **Default dictionary**: Bundled `en_US` (`data/dict/`) used when no `--dict-dir`
+- **REPL `load PATH`**: Load dictionary from path (e.g. `load /usr/share/hunspell`)
+- **REPL `:load PATH`**: Same as load
+- **REPL `dict`**: Show current dictionary path
+
 ## [0.3.0] - 2025-02-17
 
 ### Added

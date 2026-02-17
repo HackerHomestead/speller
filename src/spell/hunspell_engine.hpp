@@ -4,11 +4,11 @@
 #include <memory>
 #include <string>
 
-namespace spell {
-
 #ifdef SPELL_HAS_HUNSPELL
-class Hunspell;
+class Hunspell;  // from hunspell library (global namespace)
 #endif
+
+namespace spell {
 
 /// SpellEngine implementation using Hunspell. Loads .aff and .dic from dict_dir.
 /// When Hunspell is not available, all methods return false/empty.
@@ -39,7 +39,7 @@ class HunspellEngine : public SpellEngine {
  private:
 
 #ifdef SPELL_HAS_HUNSPELL
-  std::unique_ptr<Hunspell> hunspell_;
+  std::unique_ptr<::Hunspell> hunspell_;
 #endif
   bool loaded_ = false;
 };

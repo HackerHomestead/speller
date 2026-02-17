@@ -77,7 +77,10 @@ int run_spell(const spell::Config& config) {
       std::cout << "Did you mean: ";
       for (size_t i = 0; i < suggestions.size(); ++i) {
         if (i > 0) std::cout << ", ";
-        spell::term_bold(std::cout, suggestions[i].word);
+        if (!defs->lookup(suggestions[i].word).empty())
+          spell::term_bold_yellow(std::cout, suggestions[i].word);
+        else
+          spell::term_bold(std::cout, suggestions[i].word);
       }
       std::cout << "?\n";
       for (size_t i = 0; i < suggestions.size(); ++i) {

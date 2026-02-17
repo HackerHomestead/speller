@@ -12,6 +12,9 @@ bool term_use_color(std::ostream& out);
 /// Write word in bold (ANSI) to out.
 void term_bold(std::ostream& out, const std::string& word);
 
+/// Write word in bold+yellow (ANSI). Use for suggested words that have a definition.
+void term_bold_yellow(std::ostream& out, const std::string& word);
+
 /// Write a definition line: "  word (pos.) gloss" with bold word and colored gloss.
 void term_print_definition(std::ostream& out, const Definition& def);
 

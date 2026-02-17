@@ -1,0 +1,14 @@
+# spell glossary: word<TAB>part_of_speech<TAB>short definition
+# Or: word<TAB>definition (pos left empty)
+# Lines starting with # are comments.
+
+hello	interj.	used as a greeting
+world	n.	the earth and all people and things on it
+spell	v.	to name or write the letters of a word
+spell	n.	a period of activity or condition
+word	n.	a unit of language with meaning
+correct	adj.	right; without mistakes
+correct	v.	to make or set right
+suggestion	n.	an idea or plan offered for consideration
+dictionary	n.	a book or source of words and definitions
+definition	n.	a statement of the meaning of a word or phrase

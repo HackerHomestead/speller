@@ -11,5 +11,8 @@ dict_dir=/usr/share/hunspell
 # Optional: personal dictionary (one word per line)
 # user_dict=/home/me/.config/spell/user.dic
 
+# Optional: glossary for definitions (word<TAB>pos<TAB>definition per line)
+# defs_path=/path/to/glossary.txt
+
 # Optional: max suggestions to show (default 5)
 # max_suggestions=5

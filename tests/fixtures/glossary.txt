@@ -1,0 +1,3 @@
+test	n.	a trial or experiment
+foo	n.	placeholder word
+bar	n.	another placeholder

@@ -1,10 +1,14 @@
 #include "spell/repl.hpp"
+#include "spell/file_definition_store.hpp"
 #include "spell/hunspell_engine.hpp"
+#include "spell/stub_definition_store.hpp"
 #include "util/dict_path.hpp"
+#include "util/term_format.hpp"
 #include <iostream>
 #include <algorithm>
 #include <cctype>
 #include <cstring>
+#include <memory>
 
 #ifdef SPELL_HAS_READLINE
 #include <readline/readline.h>
@@ -25,6 +29,8 @@ const char* repl_help =
     "    load PATH      Load dictionary (PATH = dir or path to .aff file)\n"
     "    :load PATH     Same as load\n"
     "    dict           Show current dictionary path\n"
+    "    define WORD    Show definition for WORD (from glossary)\n"
+    "    def WORD       Same as define\n"
     "    quit, exit     Exit the REPL\n"
     "    :q             Shortcut to quit\n\n"
     "  Examples:\n\n"
@@ -49,7 +55,7 @@ const char* repl_help =
 const char* prompt = "spell> ";
 
 #ifdef SPELL_HAS_READLINE
-const char* repl_commands[] = {"help", "?", "load", ":load", "dict", "quit", "exit", ":q", nullptr};
+const char* repl_commands[] = {"help", "?", "load", ":load", "dict", "define", "def", "quit", "exit", ":q", nullptr};
 
 char* repl_command_generator(const char* text, int state) {
   static size_t i;
@@ -114,6 +120,21 @@ bool is_dict_command(const std::string& line) {
   return to_lower(trim(line)) == "dict";
 }
 
+bool is_define_command(const std::string& line, std::string& out_word) {
+  std::string t = trim(line);
+  if (t.empty()) return false;
+  std::string lower = to_lower(t);
+  if (lower.size() > 7 && lower.substr(0, 7) == "define ") {
+    out_word = trim(t.substr(7));
+    return !out_word.empty();
+  }
+  if (lower.size() > 4 && lower.substr(0, 4) == "def ") {
+    out_word = trim(t.substr(4));
+    return !out_word.empty();
+  }
+  return false;
+}
+
 std::string extract_word(const std::string& line) {
   std::string t = trim(line);
   if (t.empty()) return "";
@@ -121,6 +142,8 @@ std::string extract_word(const std::string& line) {
   std::string lower = to_lower(t);
   if (lower == "help" || lower == "?" || lower == "quit" || lower == "exit" || lower == "q") return "";
   if (lower == "dict") return "";
+  if (lower.size() >= 7 && lower.substr(0, 7) == "define ") return "";
+  if (lower.size() >= 4 && lower.substr(0, 4) == "def ") return "";
   if (lower.size() >= 5 && lower.substr(0, 5) == "load ") return "";
   if (lower.size() >= 6 && lower.substr(0, 6) == ":load ") return "";
   if (lower.size() >= 5 && lower.substr(0, 5) == "check") {
@@ -157,6 +180,19 @@ int run_repl(const ReplConfig& config) {
   } else {
     std::cout << "Dictionary: " << dict_dir << " (en_US)\n";
   }
+
+  std::string defs_path = config.defs_path;
+#ifdef SPELL_DEFAULT_DEFS
+  if (defs_path.empty()) defs_path = SPELL_DEFAULT_DEFS;
+#endif
+  std::unique_ptr<DefinitionStore> defs;
+  if (!defs_path.empty()) {
+    defs = FileDefinitionStore::load(defs_path);
+    if (defs)
+      std::cout << "Definitions: " << defs_path << "\n";
+  }
+  if (!defs)
+    defs = std::make_unique<StubDefinitionStore>();
 
   std::cout << "spell - Interactive spell checker (type 'help' or '?' for help)\n\n";
 
@@ -227,6 +263,17 @@ int run_repl(const ReplConfig& config) {
       continue;
     }
 
+    std::string define_word;
+    if (is_define_command(line, define_word)) {
+      Definition d = defs->lookup(define_word);
+      if (d.empty()) {
+        std::cout << "No definition for \"" << define_word << "\". (Use --defs or defs_path for a glossary.)\n";
+      } else {
+        term_print_definition(std::cout, d);
+      }
+      continue;
+    }
+
     std::string word = extract_word(line);
     if (word.empty()) continue;
 
@@ -241,6 +288,9 @@ int run_repl(const ReplConfig& config) {
 
     if (engine->is_correct(word)) {
       std::cout << "OK\n";
+      Definition d = defs->lookup(word);
+      if (!d.empty())
+        term_print_definition_inline(std::cout, word, d);
     } else {
       auto suggestions = engine->suggest(word);
       if (suggestions.size() > config.max_suggestions) {
@@ -252,9 +302,14 @@ int run_repl(const ReplConfig& config) {
         std::cout << "Did you mean: ";
         for (size_t i = 0; i < suggestions.size(); ++i) {
           if (i > 0) std::cout << ", ";
-          std::cout << suggestions[i].word;
+          term_bold(std::cout, suggestions[i].word);
         }
         std::cout << "?\n";
+        for (size_t i = 0; i < suggestions.size(); ++i) {
+          Definition d = defs->lookup(suggestions[i].word);
+          if (!d.empty())
+            term_print_definition(std::cout, d);
+        }
       }
     }
   }

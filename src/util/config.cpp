@@ -40,6 +40,8 @@ void load_config_file(Config& cfg, const std::string& path) {
     trim(val);
     if (key == "dict_dir" && !val.empty()) cfg.dict_dir = val;
     else if (key == "user_dict" && !val.empty()) cfg.user_dict_path = val;
+    else if (key == "defs_path" && !val.empty()) cfg.defs_path = val;
+    else if (key == "defs" && !val.empty()) cfg.defs_path = val;
     else if (key == "max_suggestions" && !val.empty()) {
       try { cfg.max_suggestions = static_cast<size_t>(std::stoul(val)); } catch (...) {}
     }

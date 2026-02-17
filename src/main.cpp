@@ -1,9 +1,13 @@
+#include "spell/file_definition_store.hpp"
 #include "spell/hunspell_engine.hpp"
 #include "spell/repl.hpp"
+#include "spell/stub_definition_store.hpp"
 #include "spell/suggestion_orchestrator.hpp"
 #include "util/config.hpp"
 #include "util/dict_path.hpp"
+#include "util/term_format.hpp"
 #include <iostream>
+#include <memory>
 #include <cstdlib>
 
 namespace {
@@ -17,6 +21,7 @@ const char* help_text =
     "  Config file:  ~/.config/spell/config  or  ~/.spellrc\n"
     "    dict_dir=/path/to/dict   (or path to a .aff file)\n"
     "    user_dict=/path/to/user.dic\n"
+    "    defs_path=/path/to/glossary.txt   (for definitions)\n"
     "  CLI:  --dict-dir PATH   (directory or path to .aff file)\n"
     "\n"
     "Options:\n"
@@ -24,6 +29,7 @@ const char* help_text =
     "  --check WORD     Check one word\n"
     "  --dict-dir PATH  Dictionary dir or .aff file\n"
     "  --user-dict PATH User dictionary\n"
+    "  --defs PATH      Glossary file (word<TAB>pos<TAB>definition) for definitions\n"
     "  --file PATH      Read from file\n"
     "  -h, --help       Show this help\n"
     "  -V, --version    Version and build info\n";
@@ -42,8 +48,22 @@ int run_spell(const spell::Config& config) {
       std::cerr << "spell: Could not load dictionary from " << parsed.first << "\n";
       return 1;
     }
+    std::string defs_path = config.defs_path;
+#ifdef SPELL_DEFAULT_DEFS
+    if (defs_path.empty()) defs_path = SPELL_DEFAULT_DEFS;
+#endif
+    std::unique_ptr<spell::DefinitionStore> defs;
+    if (!defs_path.empty()) {
+      defs = spell::FileDefinitionStore::load(defs_path);
+    }
+    if (!defs)
+      defs = std::make_unique<spell::StubDefinitionStore>();
+
     if (engine->is_correct(config.check_word)) {
       std::cout << config.check_word << ": OK\n";
+      spell::Definition d = defs->lookup(config.check_word);
+      if (!d.empty())
+        spell::term_print_definition_inline(std::cout, config.check_word, d);
       return 0;
     }
     std::vector<std::unique_ptr<spell::SpellEngine>> engines;
@@ -57,9 +77,14 @@ int run_spell(const spell::Config& config) {
       std::cout << "Did you mean: ";
       for (size_t i = 0; i < suggestions.size(); ++i) {
         if (i > 0) std::cout << ", ";
-        std::cout << suggestions[i].word;
+        spell::term_bold(std::cout, suggestions[i].word);
       }
       std::cout << "?\n";
+      for (size_t i = 0; i < suggestions.size(); ++i) {
+        spell::Definition d = defs->lookup(suggestions[i].word);
+        if (!d.empty())
+          spell::term_print_definition(std::cout, d);
+      }
     }
     return 0;
   }
@@ -67,6 +92,7 @@ int run_spell(const spell::Config& config) {
   spell::ReplConfig repl_config;
   repl_config.dict_dir = config.dict_dir;
   repl_config.user_dict_path = config.user_dict_path;
+  repl_config.defs_path = config.defs_path;
   repl_config.max_suggestions = config.max_suggestions;
   return spell::run_repl(repl_config);
 }

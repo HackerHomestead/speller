@@ -46,3 +46,9 @@ TEST_CASE("Config --fast sets fast mode", "[config]") {
   auto cfg = Config::from_args(2, const_cast<char**>(argv));
   REQUIRE(cfg.fast == true);
 }
+
+TEST_CASE("Config --defs sets defs_path", "[config]") {
+  const char* argv[] = {"spell", "--defs", "/path/to/glossary.txt"};
+  auto cfg = Config::from_args(3, const_cast<char**>(argv));
+  REQUIRE(cfg.defs_path == "/path/to/glossary.txt");
+}

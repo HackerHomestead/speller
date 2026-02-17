@@ -155,6 +155,7 @@ spell> :q
 | `help`, `?` | Show help with examples |
 | `load PATH`, `:load PATH` | Load dictionary from PATH (dir with .aff, .dic) |
 | `dict` | Show current dictionary path |
+| `define WORD`, `def WORD` | Show definition for WORD (from glossary) |
 | `quit`, `exit`, `:q` | Exit the REPL |
 
 **Default:** Bundled `en_US` dictionary (`data/dict/`) is used when no `--dict-dir` is given.
@@ -185,7 +186,31 @@ Custom words can be added to a user dictionary so they are treated as correct. U
 
 ---
 
-## 9. Accessibility
+## 9. Definitions
+
+When you type a correct word or see "Did you mean …?", **spell** can show a short definition if a glossary file is available.
+
+- **Glossary file**: Use `--defs PATH` or set **defs_path** in your config file. The file format is one definition per line:  
+  `word<TAB>part_of_speech<TAB>short definition`  
+  or `word<TAB>definition` (part of speech optional). Lines starting with `#` are comments.
+- **Default**: When built from source, a default path to `data/glossary.txt` is used if you don’t set one (so definitions work when you run from the project root).
+- **Display**: In a terminal, the **word** is shown in **bold** and the definition text in color for easier reading. Set the environment variable **NO_COLOR** to disable colors.
+
+Example (with glossary loaded):
+
+```
+spell> hello
+OK
+  hello (interj.) used as a greeting
+
+spell> helo
+Did you mean: hello, …?
+  hello (interj.) used as a greeting
+```
+
+---
+
+## 10. Accessibility
 
 The design prioritizes:
 
@@ -197,7 +222,7 @@ The design prioritizes:
 
 ---
 
-## 10. Troubleshooting
+## 11. Troubleshooting
 
 ### "Dictionary not found"
 - Ensure `--dict-dir` points to a directory with `.aff` and `.dic` files
@@ -217,6 +242,6 @@ The design prioritizes:
 
 ---
 
-## 11. Version History
+## 12. Version History
 
 - **0.4.0 (MVP)** — Bundled Hunspell (static), config file, REPL by default, single-word check. See [CHANGELOG.md](../CHANGELOG.md) for full release notes.

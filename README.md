@@ -46,6 +46,7 @@ In the REPL: type a word to check, `help` for commands, `:q` to quit.
 | `--check WORD` spell check | ✅ |
 | Hunspell integration | ✅ |
 | User dictionary (`--user-dict`) | ✅ |
+| Definitions (glossary file, bold/color in terminal) | ✅ |
 | Interactive REPL (default) | ✅ |
 | Stream mode | 🔲 Phase 5 |
 | Definition lookup | 🔲 Phase 4 |

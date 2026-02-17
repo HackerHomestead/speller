@@ -72,11 +72,13 @@ FetchContent_MakeAvailable(Catch2)
 add_library(spell_lib
   src/spell/stub_spell_engine.cpp
   src/spell/stub_definition_store.cpp
+  src/spell/file_definition_store.cpp
   src/spell/hunspell_engine.cpp
   src/spell/suggestion_orchestrator.cpp
   src/spell/repl.cpp
   src/util/config.cpp
   src/util/dict_path.cpp
+  src/util/term_format.cpp
 )
 target_include_directories(spell_lib
   PUBLIC
@@ -89,7 +91,8 @@ if(READLINE_FOUND)
   target_compile_definitions(spell_lib PRIVATE SPELL_HAS_READLINE=1)
 endif()
 target_compile_definitions(spell_lib PRIVATE
-  SPELL_DEFAULT_DICT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data/dict")
+  SPELL_DEFAULT_DICT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data/dict"
+  SPELL_DEFAULT_DEFS="${CMAKE_CURRENT_SOURCE_DIR}/data/glossary.txt")
 
 # Main executable
 add_executable(spell src/main.cpp)
@@ -97,6 +100,7 @@ target_link_libraries(spell PRIVATE spell_lib)
 target_compile_definitions(spell PRIVATE
   SPELL_VERSION="${PROJECT_VERSION}"
   SPELL_DEFAULT_DICT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data/dict"
+  SPELL_DEFAULT_DEFS="${CMAKE_CURRENT_SOURCE_DIR}/data/glossary.txt"
   SPELL_HAS_HUNSPELL=1)
 
 # Tests

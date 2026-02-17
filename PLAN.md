@@ -93,13 +93,13 @@ speller/
 
 | # | Task | Status |
 |---|------|--------|
-| 2.1 | Implement `HunspellEngine` (load .aff/.dic, `is_correct`, `suggest`) | ⬜ |
-| 2.2 | Wire dictionary loading from `--dict-dir` or default path | ⬜ |
-| 2.3 | Add user dictionary support (e.g. `user.dic` in config dir) | ⬜ |
-| 2.4 | Graceful degradation when dict files missing | ⬜ |
-| 2.5 | Unit tests for `HunspellEngine` with sample dict | ⬜ |
+| 2.1 | Implement `HunspellEngine` (load .aff/.dic, `is_correct`, `suggest`) | ✅ |
+| 2.2 | Wire dictionary loading from `--dict-dir` or default path | ✅ |
+| 2.3 | Add user dictionary support (e.g. `user.dic` in config dir) | ✅ |
+| 2.4 | Graceful degradation when dict files missing | ✅ |
+| 2.5 | Unit tests for `HunspellEngine` with sample dict | ✅ |
 
-**Deliverable:** Can check words and get suggestions from Hunspell.
+**Deliverable:** Can check words and get suggestions from Hunspell. ✅
 
 ---
 

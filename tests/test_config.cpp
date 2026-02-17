@@ -23,10 +23,22 @@ TEST_CASE("Config --file sets path and Stream mode", "[config]") {
   REQUIRE(cfg.file_path == "/tmp/test.txt");
 }
 
+TEST_CASE("Config --check sets check_word", "[config]") {
+  const char* argv[] = {"spell", "--check", "helo"};
+  auto cfg = Config::from_args(3, const_cast<char**>(argv));
+  REQUIRE(cfg.check_word == "helo");
+}
+
 TEST_CASE("Config --dict-dir sets dict_dir", "[config]") {
   const char* argv[] = {"spell", "--dict-dir", "/opt/dict"};
   auto cfg = Config::from_args(3, const_cast<char**>(argv));
   REQUIRE(cfg.dict_dir == "/opt/dict");
+}
+
+TEST_CASE("Config --user-dict sets user_dict_path", "[config]") {
+  const char* argv[] = {"spell", "--user-dict", "/home/user/user.dic"};
+  auto cfg = Config::from_args(3, const_cast<char**>(argv));
+  REQUIRE(cfg.user_dict_path == "/home/user/user.dic");
 }
 
 TEST_CASE("Config --fast sets fast mode", "[config]") {

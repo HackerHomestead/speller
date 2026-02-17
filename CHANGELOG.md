@@ -8,8 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- (Phase 2) Hunspell integration
-- (Phase 2) User dictionary support
+- (Phase 2) User dictionary add/learn from interactive mode
+
+## [0.2.0] - 2025-02-17
+
+### Added
+- Phase 2: Hunspell integration
+- `HunspellEngine` — SpellEngine implementation using Hunspell
+- `--check WORD` — Quick single-word spell check
+- `--user-dict PATH` — User dictionary (one word per line)
+- Graceful degradation when Hunspell not available (libhunspell-dev)
+- CMake fallback: find Hunspell via find_path/find_library when pkg-config fails
+- Unit tests for HunspellEngine (run when dict available)
 
 ## [0.1.0] - 2025-02-17
 

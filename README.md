@@ -15,9 +15,9 @@ cmake --build .
 ### Run
 
 ```bash
-./spell --help      # Show options
-./spell             # Interactive mode (currently stub)
-./spell_tests       # Run unit tests
+./spell --help                                    # Show options
+./spell --check helo --dict-dir /usr/share/hunspell  # Check word (needs libhunspell-dev)
+./spell_tests                                     # Run unit tests
 ```
 
 ### Requirements
@@ -26,18 +26,20 @@ cmake --build .
 - CMake 3.14+
 - Catch2 (fetched automatically)
 
-Optional for Phase 2+:
-- Hunspell (`libhunspell-dev` on Debian/Ubuntu, `hunspell-devel` on Fedora)
+For spell checking:
+- **libhunspell-dev** (Debian/Ubuntu) or **hunspell-devel** (Fedora)
+- Hunspell dictionaries, e.g. **hunspell-en-us** (or use `--dict-dir`)
 
 ## Features
 
 | Feature | Status |
 |---------|--------|
 | CLI with --help | ✅ |
+| `--check WORD` spell check | ✅ |
+| Hunspell integration | ✅ |
+| User dictionary (`--user-dict`) | ✅ |
 | Interactive mode (stub) | ✅ |
 | Stream mode (stub) | ✅ |
-| Hunspell spell checking | 🔲 Phase 2 |
-| User dictionary | 🔲 Phase 2 |
 | Definition lookup | 🔲 Phase 4 |
 | Full TUI | 🔲 Phase 5 |
 

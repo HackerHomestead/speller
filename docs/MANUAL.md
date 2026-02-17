@@ -43,7 +43,9 @@ sudo cmake --install .   # If install rules are configured
 | `--interactive` | Interactive word-by-word mode (default) |
 | `--stream` | Stream mode: read from stdin, write to stdout |
 | `--file PATH` | Read from file (implies stream mode) |
+| `--check WORD` | Check a single word and show suggestions |
 | `--dict-dir PATH` | Directory containing `.aff` and `.dic` dictionary files |
+| `--user-dict PATH` | User dictionary (one word per line) |
 | `--defs PATH` | Path to definition database (Phase 4) |
 | `--fast` | In stream mode: auto-apply top suggestion |
 | `--careful` | In stream mode: prompt when confidence is low (default) |
@@ -52,7 +54,8 @@ sudo cmake --install .   # If install rules are configured
 ### Examples
 
 ```bash
-spell                          # Interactive mode (default)
+spell --check helo --dict-dir /usr/share/hunspell   # Quick word check
+spell --check word --dict-dir /opt/dict --user-dict ~/user.dic
 spell --stream                 # Stream from stdin
 spell --file document.txt      # Spell-check a file
 spell --dict-dir /opt/dict     # Use custom dictionary directory
@@ -111,9 +114,7 @@ In interactive mode you step through text word-by-word:
 
 ## 7. User Dictionary
 
-*(Phase 2 — planned)*
-
-Custom words can be added to a user dictionary (e.g. `user.dic`) so they are treated as correct. Location is configurable.
+Custom words can be added to a user dictionary so they are treated as correct. Use `--user-dict PATH` to specify a file with one word per line. Lines starting with `#` are ignored.
 
 ---
 

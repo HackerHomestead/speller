@@ -3,21 +3,27 @@
 #ifdef SPELL_HAS_HUNSPELL
 #include "spell/hunspell_engine.hpp"
 #include <cstdlib>
+#include <string>
 #include <unistd.h>
 
 using namespace spell;
 
 namespace {
 std::string find_dict_dir() {
+  const char* env_src = std::getenv("SPELL_DICT_DIR");
+  if (env_src) {
+    std::string dir(env_src);
+    if (access((dir + "/en_US.aff").c_str(), R_OK) == 0) return dir;
+  }
   const char* dirs[] = {
+    SPELL_DICT_DIR,
     "/usr/share/hunspell",
     "/usr/share/myspell/dicts",
     nullptr
   };
   for (int i = 0; dirs[i]; ++i) {
-    if (access((std::string(dirs[i]) + "/en_US.aff").c_str(), R_OK) == 0) {
-      return dirs[i];
-    }
+    std::string path(dirs[i]);
+    if (access((path + "/en_US.aff").c_str(), R_OK) == 0) return path;
   }
   return "";
 }
@@ -59,6 +65,18 @@ TEST_CASE("HunspellEngine suggest returns corrections", "[hunspell_engine]") {
     if (s.word == "hello") has_hello = true;
   }
   REQUIRE(has_hello);
+}
+
+TEST_CASE("HunspellEngine loads user dictionary", "[hunspell_engine]") {
+  std::string dict_dir = find_dict_dir();
+  if (dict_dir.empty()) {
+    SKIP("No Hunspell dictionary found");
+  }
+  std::string user_dict = std::string(SPELL_SOURCE_DIR) + "/tests/fixtures/user.dic";
+  auto engine = HunspellEngine::create(dict_dir, "en_US", user_dict);
+  if (!engine->is_loaded()) SKIP("Hunspell not loaded");
+  REQUIRE(engine->is_correct("customword"));
+  REQUIRE(engine->is_correct("myword"));
 }
 
 #else  // !SPELL_HAS_HUNSPELL

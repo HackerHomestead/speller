@@ -43,3 +43,32 @@ TEST_CASE("SuggestionOrchestrator limits to max_count", "[suggestion_orchestrato
 
   REQUIRE(suggestions.size() == 3);
 }
+
+TEST_CASE("SuggestionOrchestrator with empty engines returns empty", "[suggestion_orchestrator]") {
+  std::vector<std::unique_ptr<SpellEngine>> engines;
+  SuggestionOrchestrator orch(std::move(engines));
+  auto suggestions = orch.suggest("helo", 5);
+  REQUIRE(suggestions.empty());
+}
+
+TEST_CASE("SuggestionOrchestrator with engine returning nothing", "[suggestion_orchestrator]") {
+  auto e = std::make_unique<StubSpellEngine>();
+  std::vector<std::unique_ptr<SpellEngine>> engines;
+  engines.push_back(std::move(e));
+  SuggestionOrchestrator orch(std::move(engines));
+  auto suggestions = orch.suggest("unknown", 5);
+  REQUIRE(suggestions.empty());
+}
+
+TEST_CASE("SuggestionOrchestrator deduplicates and sums scores", "[suggestion_orchestrator]") {
+  auto e = std::make_unique<StubSpellEngine>();
+  e->add_suggestion("x", "same", 1.0f);
+  e->add_suggestion("x", "same", 0.5f);  // same word again from same engine
+  std::vector<std::unique_ptr<SpellEngine>> engines;
+  engines.push_back(std::move(e));
+  SuggestionOrchestrator orch(std::move(engines));
+  auto suggestions = orch.suggest("x", 5);
+  REQUIRE(suggestions.size() == 1);
+  REQUIRE(suggestions[0].word == "same");
+  REQUIRE(suggestions[0].score == 1.5f);
+}

@@ -15,7 +15,8 @@ struct Config {
   std::string defs_path;       // For --defs
   bool fast = false;           // --fast: auto-apply; --careful: prompt
   size_t max_suggestions = 5;  // Number of suggestions to show
-  bool help_requested = false; // --help or -h
+  bool help_requested = false;  // --help or -h
+  bool version_requested = false;  // --version or -V
 
   static Config from_args(int argc, char* argv[]);
 };

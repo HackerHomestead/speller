@@ -14,3 +14,15 @@ TEST_CASE("Config -h sets help_requested", "[cli]") {
   auto cfg = Config::from_args(2, const_cast<char**>(argv));
   REQUIRE(cfg.help_requested);
 }
+
+TEST_CASE("Config --version sets version_requested", "[cli]") {
+  const char* argv[] = {"spell", "--version"};
+  auto cfg = Config::from_args(2, const_cast<char**>(argv));
+  REQUIRE(cfg.version_requested);
+}
+
+TEST_CASE("Config -V sets version_requested", "[cli]") {
+  const char* argv[] = {"spell", "-V"};
+  auto cfg = Config::from_args(2, const_cast<char**>(argv));
+  REQUIRE(cfg.version_requested);
+}

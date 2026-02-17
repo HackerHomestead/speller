@@ -29,6 +29,8 @@ Config Config::from_args(int argc, char* argv[]) {
       cfg.fast = false;
     } else if (std::strcmp(arg, "--help") == 0 || std::strcmp(arg, "-h") == 0) {
       cfg.help_requested = true;
+    } else if (std::strcmp(arg, "--version") == 0 || std::strcmp(arg, "-V") == 0) {
+      cfg.version_requested = true;
     }
   }
 

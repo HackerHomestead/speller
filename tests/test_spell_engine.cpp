@@ -33,3 +33,23 @@ TEST_CASE("StubSpellEngine returns empty suggestions for unknown word", "[spell_
   auto suggestions = engine.suggest("xyznonexistent");
   REQUIRE(suggestions.empty());
 }
+
+TEST_CASE("StubSpellEngine handles empty word", "[spell_engine]") {
+  StubSpellEngine engine;
+  engine.add_correct_word("hello");
+  REQUIRE_FALSE(engine.is_correct(""));
+  REQUIRE(engine.suggest("").empty());
+}
+
+TEST_CASE("StubSpellEngine is case-sensitive", "[spell_engine]") {
+  StubSpellEngine engine;
+  engine.add_correct_word("Hello");
+  REQUIRE(engine.is_correct("Hello"));
+  REQUIRE_FALSE(engine.is_correct("hello"));
+}
+
+TEST_CASE("Suggestion struct has word and score", "[spell_engine]") {
+  Suggestion s{"test", 0.5f};
+  REQUIRE(s.word == "test");
+  REQUIRE(s.score == 0.5f);
+}

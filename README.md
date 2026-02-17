@@ -15,20 +15,25 @@ cmake --build .
 ### Run
 
 ```bash
+./spell                                           # Interactive REPL (default)
 ./spell --help                                    # Show options
-./spell --check helo --dict-dir /usr/share/hunspell  # Check word (needs libhunspell-dev)
-./spell_tests                                     # Run unit tests
+./spell --check hello --dict-dir ../data/dict     # Quick word check
+./spell_tests                                     # Run unit + functional tests
 ```
+
+In the REPL: type a word to check, `help` for commands, `:q` to quit.
 
 ### Requirements
 
-- C++17 compiler (g++ or clang++)
-- CMake 3.14+
-- Catch2 (fetched automatically)
+| Dependency | Required | Package (Debian/Ubuntu) |
+|------------|----------|-------------------------|
+| C++17 compiler | Yes | `build-essential` |
+| CMake 3.14+ | Yes | `cmake` |
+| Catch2 | Yes (auto-fetched) | — |
+| Hunspell | No (spell check) | `libhunspell-dev` |
+| Hunspell dicts | No (bundled in `data/dict/`) | `hunspell-en-us` for full coverage |
 
-For spell checking:
-- **libhunspell-dev** (Debian/Ubuntu) or **hunspell-devel** (Fedora)
-- Hunspell dictionaries, e.g. **hunspell-en-us** (or use `--dict-dir`)
+**Full details:** [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md)
 
 ## Features
 
@@ -46,6 +51,8 @@ For spell checking:
 ## Documentation
 
 - **[User Manual](docs/MANUAL.md)** — Complete usage guide
+- **[Dependencies](docs/DEPENDENCIES.md)** — Build and runtime deps, package names
+- **[Tests](tests/README.md)** — Unit, functional, and fuzz tests
 - **[IDEA.md](IDEA.md)** — Design document
 - **[PLAN.md](PLAN.md)** — Development plan
 

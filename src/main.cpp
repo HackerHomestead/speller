@@ -1,4 +1,5 @@
 #include "spell/hunspell_engine.hpp"
+#include "spell/repl.hpp"
 #include "spell/suggestion_orchestrator.hpp"
 #include "util/config.hpp"
 #include <iostream>
@@ -9,10 +10,11 @@ namespace {
 const char* help_text =
     "spell - Offline spell checker and definition tool\n"
     "\n"
-    "Usage: spell [options]\n"
+    "Usage: spell [options]     Run with no args for interactive REPL\n"
     "\n"
     "Options:\n"
-    "  --interactive    Interactive word-by-word mode (default)\n"
+    "  (no args)        Interactive REPL (default)\n"
+    "  --interactive    Same as default\n"
     "  --stream         Stream mode: read from stdin/file, write to stdout\n"
     "  --file PATH      Read from file (implies --stream)\n"
     "  --check WORD     Check a single word and show suggestions\n"
@@ -21,7 +23,8 @@ const char* help_text =
     "  --defs PATH      Definition database path\n"
     "  --fast           Auto-apply top suggestion in stream mode\n"
     "  --careful        Prompt when confidence is low (default)\n"
-    "  -h, --help       Show this help\n";
+    "  -h, --help       Show this help\n"
+    "  -V, --version    Show version and build info\n";
 
 int run_spell(const spell::Config& config) {
   // --check: quick single-word check (requires --dict-dir)
@@ -54,17 +57,11 @@ int run_spell(const spell::Config& config) {
     return 0;
   }
 
-  if (config.dict_dir.empty()) {
-    std::cout << "Spell module (stub). Use --dict-dir and --check WORD for spell check.\n";
-  } else {
-    auto engine = spell::HunspellEngine::create(config.dict_dir, "en_US", config.user_dict_path);
-    if (engine->is_loaded()) {
-      std::cout << "Spell module: Hunspell loaded from " << config.dict_dir << "\n";
-    } else {
-      std::cout << "Spell module: Could not load dictionary from " << config.dict_dir << "\n";
-    }
-  }
-  return 0;
+  spell::ReplConfig repl_config;
+  repl_config.dict_dir = config.dict_dir;
+  repl_config.user_dict_path = config.user_dict_path;
+  repl_config.max_suggestions = config.max_suggestions;
+  return spell::run_repl(repl_config);
 }
 
 }  // namespace
@@ -74,6 +71,16 @@ int main(int argc, char* argv[]) {
 
   if (config.help_requested) {
     std::cout << help_text;
+    return 0;
+  }
+
+  if (config.version_requested) {
+    std::cout << "spell " << SPELL_VERSION << "\n";
+#ifdef SPELL_HAS_HUNSPELL
+    std::cout << "  Hunspell: enabled\n";
+#else
+    std::cout << "  Hunspell: disabled (install libhunspell-dev to enable)\n";
+#endif
     return 0;
   }
 

@@ -36,30 +36,37 @@ This plan breaks down the IDEA.md design into actionable development tasks. The 
 
 ---
 
-## Project Structure (Target)
+## Project Structure (Current)
 
 ```
 speller/
 ├── CMakeLists.txt
 ├── src/
-│   ├── main.cpp              # Entry point, CLI, dispatch
+│   ├── main.cpp              # Entry point, CLI, REPL dispatch
 │   ├── spell/
-│   │   ├── spell_engine.hpp/cpp
+│   │   ├── spell_engine.hpp
 │   │   ├── hunspell_engine.hpp/cpp
-│   │   ├── definition_store.hpp/cpp
+│   │   ├── stub_spell_engine.hpp/cpp
+│   │   ├── definition_store.hpp
+│   │   ├── stub_definition_store.hpp/cpp
 │   │   ├── suggestion_orchestrator.hpp/cpp
-│   │   └── spell_tui.hpp/cpp
+│   │   └── repl.hpp/cpp       # Interactive REPL (default)
 │   └── util/
-│       ├── config.hpp/cpp
-│       └── text_utils.hpp/cpp   # word tokenization, etc.
-├── include/
-│   └── spell/                    # Public headers (if any)
-├── data/                          # Default dict paths, scripts
-│   └── dict/                      # Symlink or copy of hunspell dicts
+│       └── config.hpp/cpp
+├── data/dict/
+│   ├── en_US.aff, en_US.dic   # Bundled English dict
+│   └── README.md
+├── docs/
+│   ├── MANUAL.md
+│   └── DEPENDENCIES.md
 ├── tests/
-│   └── ...
+│   ├── test_*.cpp
+│   ├── fuzz_utils.hpp/cpp
+│   ├── fixtures/user.dic
+│   └── README.md
 ├── IDEA.md
-└── PLAN.md
+├── PLAN.md
+└── CHANGELOG.md
 ```
 
 ---
@@ -81,7 +88,7 @@ speller/
 | 1.7 | Implement `main()` with CLI parsing (`--interactive`, `--file`, `--dict-dir`, etc.) | ✅ |
 | 1.8 | Implement `run_spell(Config)` that prints placeholder and exits | ✅ |
 
-**Deliverable:** `./spell --help` works; `./spell` prints "Spell module (stub)" or similar. ✅
+**Deliverable:** `./spell --help` works; `./spell` enters REPL. ✅
 
 ---
 
@@ -111,13 +118,13 @@ speller/
 
 | # | Task | Status |
 |---|------|--------|
-| 3.1 | Implement `SuggestionOrchestrator` (merge, dedupe) | ⬜ |
+| 3.1 | Implement `SuggestionOrchestrator` (merge, dedupe) | ✅ |
 | 3.2 | Add Levenshtein edit-distance scoring | ⬜ |
 | 3.3 | Add optional frequency-based scoring (frequency list) | ⬜ |
 | 3.4 | Config: `--suggestions N` (default 5) | ⬜ |
-| 3.5 | Tests for common typo patterns | ⬜ |
+| 3.5 | Tests for common typo patterns | ✅ (fuzz tests) |
 
-**Deliverable:** Ranked "Did you mean...?" suggestions.
+**Deliverable:** Ranked "Did you mean...?" suggestions. ✅ (basic merge)
 
 ---
 
@@ -147,14 +154,15 @@ speller/
 
 | # | Task | Status |
 |---|------|--------|
-| 5.1 | Implement interactive word-by-word mode (display, navigation) | ⬜ |
-| 5.2 | Keybindings: 1–5 (pick), s (skip), u (undo), d (define), q (quit) | ⬜ |
-| 5.3 | Implement stream mode (stdin/file → stdout) | ⬜ |
-| 5.4 | Config: `--fast` vs `--careful` (auto-apply vs prompt) | ⬜ |
-| 5.5 | Accessibility: verbosity, spacing, high-contrast options | ⬜ |
-| 5.6 | Use ANSI terminal; add ncurses only if needed | ⬜ |
+| 5.1 | REPL mode (default when no args) | ✅ |
+| 5.2 | REPL: help, quit, autocomplete (readline), history | ✅ |
+| 5.3 | Word-by-word mode: 1–5 (pick), s (skip), u (undo), d (define) | ⬜ |
+| 5.4 | Implement stream mode (stdin/file → stdout) | ⬜ |
+| 5.5 | Config: `--fast` vs `--careful` (auto-apply vs prompt) | ⬜ |
+| 5.6 | Accessibility: verbosity, spacing, high-contrast options | ⬜ |
+| 5.7 | Use ANSI terminal; add ncurses only if needed | ⬜ |
 
-**Deliverable:** Full interactive and stream workflows.
+**Deliverable:** Full interactive and stream workflows. ✅ (REPL)
 
 ---
 
@@ -180,16 +188,21 @@ speller/
 
 | # | Task | Status |
 |---|------|--------|
-| 7.1 | User-facing README (usage, options, examples) | ⬜ |
-| 7.2 | Developer docs (build, extend, integrate) | ⬜ |
+| 7.1 | User-facing README (usage, options, examples) | ✅ |
+| 7.2 | docs/MANUAL.md, docs/DEPENDENCIES.md | ✅ |
+| 7.3 | tests/README.md, CHANGELOG.md | ✅ |
+| 7.4 | Developer docs (build, extend, integrate) | ⬜ |
 
 ---
 
 ## Build Dependencies
 
-- **Hunspell** (libhunspell-dev or hunspell-devel)
-- **C++17** compiler (g++, clang++)
-- **CMake** 3.14+
+See **[docs/DEPENDENCIES.md](docs/DEPENDENCIES.md)** for full details and package names.
+
+- **Required**: C++17 compiler, CMake 3.14+, Git (for FetchContent)
+- **Optional**: Hunspell (libhunspell-dev / hunspell-devel) — spell checking
+- **Optional**: Readline (libreadline-dev) — REPL autocomplete, history
+- **FetchContent**: Catch2 (auto-fetched)
 
 Optional later: ncurses, SQLite (for definition DB).
 
@@ -197,6 +210,6 @@ Optional later: ncurses, SQLite (for definition DB).
 
 ## Next Steps
 
-1. **Start Phase 1.1:** Create `CMakeLists.txt` and minimal `main.cpp`.
-2. **Phase 1.2–1.5:** Add header files with interfaces (no implementations yet).
-3. **Phase 1.6–1.8:** Config, CLI, and stub `run_spell()`.
+1. **Phase 3.2–3.4:** Levenshtein scoring, frequency list, `--suggestions N`
+2. **Phase 4:** Definition store (WordNet-derived or minimal DB)
+3. **Phase 5.3–5.6:** Word-by-word mode, stream mode, accessibility

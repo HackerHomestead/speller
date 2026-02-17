@@ -10,6 +10,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - (Phase 2) User dictionary add/learn from interactive mode
 
+## [0.3.0] - 2025-02-17
+
+### Added
+- **REPL by default**: `spell` with no args enters interactive REPL
+- **help** and **?** commands with examples
+- **quit**, **exit**, **:q** to exit
+- **Autocomplete** (Tab) for commands when built with readline
+- **History** (Up/Down) when built with readline
+- Graceful fallback to plain getline when stdin is piped (no readline blocking)
+
+## [0.2.1] - 2025-02-17
+
+### Added
+- Bundled English dictionary (`data/dict/en_US.aff`, `en_US.dic`) — ~80 words for testing
+- Unit tests: SpellEngine (case, empty word, Suggestion struct), SuggestionOrchestrator (empty engines, deduplication), DefinitionStore (overwrite, empty)
+- Functional tests: `--help`, `-h`, `--version`, `-V`, no-args, `--check` with bundled dict
+- HunspellEngine user dictionary test (when Hunspell available)
+- Test fixtures: `tests/fixtures/user.dic`
+- **Fuzz tests**: 100 dyslexic-like misspellings + 100 random fuzz words
+  - `[fuzz][dyslexic]`: Actual misspellings (reversals, transposition, doubling, omission)
+  - `[fuzz][fuzzing]`: Random nonsense strings — no crash, no UB
+  - With Hunspell: validates suggestions include correct word for dyslexic input
+
 ## [0.2.0] - 2025-02-17
 
 ### Added

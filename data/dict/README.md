@@ -1,8 +1,10 @@
 # Dictionary directory
 
-Place Hunspell `.aff` and `.dic` files here, or use `--dict-dir` to point elsewhere.
+Bundled **English** dictionary: `en_US.aff` and `en_US.dic` (~80 common words for testing).
 
-For testing, the build uses system dictionaries if available:
-- Linux: `/usr/share/hunspell/` (e.g. en_US.aff, en_US.dic)
+Place additional Hunspell `.aff` and `.dic` files here, or use `--dict-dir` to point elsewhere.
 
-Install dictionaries: `hunspell-en-us`, `hunspell-en-gb`, etc.
+For full English coverage, install system dictionaries:
+- Debian/Ubuntu: `hunspell-en-us`, `hunspell-en-gb`
+- Fedora: `hunspell-en-US`
+- Linux default path: `/usr/share/hunspell/`

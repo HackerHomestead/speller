@@ -27,3 +27,19 @@ TEST_CASE("StubDefinitionStore returns empty for unknown word", "[definition_sto
   auto def = store.lookup("xyznonexistent");
   REQUIRE(def.empty());
 }
+
+TEST_CASE("StubDefinitionStore overwrites with add_definition", "[definition_store]") {
+  StubDefinitionStore store;
+  store.add_definition("test", "n.", "first");
+  store.add_definition("test", "v.", "second");
+  auto def = store.lookup("test");
+  REQUIRE(def.part_of_speech == "v.");
+  REQUIRE(def.short_gloss == "second");
+}
+
+TEST_CASE("Definition empty when headword empty", "[definition_store]") {
+  Definition def;
+  def.part_of_speech = "n.";
+  def.short_gloss = "something";
+  REQUIRE(def.empty());
+}

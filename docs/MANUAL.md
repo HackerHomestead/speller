@@ -31,8 +31,14 @@ sudo cmake --install .   # If install rules are configured
 
 ### Dependencies
 
-- **Build**: C++17 compiler, CMake 3.14+
-- **Runtime**: Hunspell dictionaries (`.aff` and `.dic` files) — see Section 4
+| Type | Dependency | Package (Debian/Ubuntu) |
+|------|------------|-------------------------|
+| Build (required) | C++17 compiler, CMake 3.14+ | `build-essential`, `cmake` |
+| Build (optional) | Hunspell (spell engine) | `libhunspell-dev` |
+| Build (optional) | Readline (REPL autocomplete) | `libreadline-dev` |
+| Runtime | Hunspell dictionaries | `hunspell-en-us` or `--dict-dir` |
+
+**Full list with Fedora/Arch package names:** [DEPENDENCIES.md](DEPENDENCIES.md)
 
 ---
 
@@ -50,15 +56,17 @@ sudo cmake --install .   # If install rules are configured
 | `--fast` | In stream mode: auto-apply top suggestion |
 | `--careful` | In stream mode: prompt when confidence is low (default) |
 | `-h`, `--help` | Show help and exit |
+| `-V`, `--version` | Show version and build info (Hunspell enabled/disabled) |
 
 ### Examples
 
 ```bash
+spell                          # Interactive REPL (default)
+spell --dict-dir ../data/dict  # REPL with bundled English dict
 spell --check helo --dict-dir /usr/share/hunspell   # Quick word check
 spell --check word --dict-dir /opt/dict --user-dict ~/user.dic
 spell --stream                 # Stream from stdin
 spell --file document.txt      # Spell-check a file
-spell --dict-dir /opt/dict     # Use custom dictionary directory
 spell --help                   # Show all options
 ```
 
@@ -85,19 +93,39 @@ Common sources:
 
 ---
 
-## 5. Interactive Mode
+## 5. Interactive REPL Mode
 
-*(Phase 5 — not yet implemented)*
+Run `spell` with no arguments to enter the REPL:
 
-In interactive mode you step through text word-by-word:
+```
+spell - Interactive spell checker (type 'help' or '?' for help)
 
-| Key | Action |
-|-----|--------|
-| `1`–`5` | Pick suggestion 1–5 |
-| `s` | Skip word |
-| `u` | Undo previous change |
-| `d` | Show definition |
-| `q` | Quit (optionally save partial result) |
+spell> hello
+OK
+
+spell> helo
+Did you mean: hello?
+
+spell> help
+(shows help with examples)
+
+spell> :q
+(exits)
+```
+
+### REPL Commands
+
+| Command | Action |
+|---------|--------|
+| `help`, `?` | Show help with examples |
+| `quit`, `exit`, `:q` | Exit the REPL |
+
+### REPL Tips
+
+- **Tab** completes commands (when built with readline)
+- **Up/Down** for command history (when built with readline)
+- Type a word and press Enter to check spelling
+- Empty line does nothing
 
 ---
 
@@ -136,8 +164,12 @@ The design prioritizes:
 - Ensure `--dict-dir` points to a directory with `.aff` and `.dic` files
 - Check file names match (e.g. `en_US.aff` and `en_US.dic`)
 
+### "Could not load dictionary"
+- Install **libhunspell-dev** (build) and **hunspell-en-us** (runtime)
+- Run `cmake ..` and check output: `Hunspell: YES` means spell check is enabled
+
 ### Build fails
-- Install `libhunspell-dev` (or equivalent) if Phase 2+ is enabled
+- See [DEPENDENCIES.md](DEPENDENCIES.md) for required packages
 - Ensure CMake 3.14+ and a C++17 compiler are installed
 
 ---

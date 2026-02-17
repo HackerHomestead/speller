@@ -1,14 +1,133 @@
 # spell glossary: word<TAB>part_of_speech<TAB>short definition
-# Or: word<TAB>definition (pos left empty)
+# Coverage: bundled en_US.dic (80 words). Target ≥80% for tests.
 # Lines starting with # are comments.
 
 hello	interj.	used as a greeting
 world	n.	the earth and all people and things on it
-spell	v.	to name or write the letters of a word
-spell	n.	a period of activity or condition
-word	n.	a unit of language with meaning
+test	n.	a trial or experiment
+test	v.	to try or examine
 correct	adj.	right; without mistakes
 correct	v.	to make or set right
-suggestion	n.	an idea or plan offered for consideration
+correctly	adv.	in a correct way
 dictionary	n.	a book or source of words and definitions
+spelling	n.	the way a word is spelled
+check	v.	to verify or examine
+check	n.	a verification or control
+word	n.	a unit of language with meaning
+the	art.	used to refer to a specific thing
+and	conj.	used to connect words or clauses
+for	prep.	used to indicate purpose or recipient
+with	prep.	in the company of; using
+from	prep.	indicating origin or source
+that	det.	used to identify something
+that	conj.	introducing a clause
+this	det.	used to identify something nearby
+have	v.	to possess or hold
+been	v.	past participle of be
+were	v.	past tense of be (plural)
+their	det.	belonging to them
+there	adv.	in or at that place
+there	pron.	used to introduce a clause
+they	pron.	third person plural
+would	v.	past of will; used for conditionals
+could	v.	past of can; used for possibility
+should	v.	used to indicate obligation or expectation
+about	prep.	on the subject of; approximately
+which	pron.	used to ask or specify one of a set
+when	adv.	at what time
+when	conj.	at the time that
+where	adv.	at or in what place
+what	pron.	asking for information
+who	pron.	which person
+how	adv.	in what way or manner
+some	det.	an unspecified amount or number
+more	det.	greater in amount or degree
+other	adj.	additional; different
+over	prep.	above; across; finished
+after	prep.	following in time
+before	prep.	earlier than
+first	adj.	coming before all others
+first	adv.	before anything else
+second	adj.	next after first
+second	n.	a unit of time
+best	adj.	of the highest quality
+most	det.	greatest in amount or degree
+great	adj.	large; excellent
+small	adj.	of limited size
+good	adj.	of high quality; virtuous
+bad	adj.	of poor quality; wrong
+new	adj.	recently made or created
+old	adj.	having lived or existed a long time
+long	adj.	of great length
+short	adj.	of small length; brief
+right	adj.	correct; opposite of left
+right	n.	something one is entitled to
+wrong	adj.	incorrect; unjust
+true	adj.	in accordance with fact
+false	adj.	not true
+same	adj.	identical; not different
+different	adj.	not the same
+another	det.	one more; a different one
+each	det.	every one of two or more
+every	det.	all of a group
+all	det.	the whole quantity
+both	det.	the two; one and the other
+few	det.	a small number
+many	det.	a large number
+very	adv.	to a high degree
+too	adv.	excessively; also
+also	adv.	in addition
+only	adv.	no more than; solely
+just	adv.	exactly; only; very recently
+even	adv.	used for emphasis
+still	adv.	up to this time; nevertheless
+always	adv.	at all times
+never	adv.	at no time
+often	adv.	frequently
+really	adv.	in reality; very
+actually	adv.	in fact
+clearly	adv.	in a clear manner
+obviously	adv.	in an obvious way
+probably	adv.	almost certainly
+certainly	adv.	without doubt
+definitely	adv.	without question
+completely	adv.	fully; totally
+entirely	adv.	completely
+totally	adv.	completely
+fully	adv.	completely
+mainly	adv.	for the most part
+generally	adv.	usually; in general
+especially	adv.	particularly
+particularly	adv.	especially
+specifically	adv.	in a specific way
+therefore	adv.	for that reason
+however	adv.	nevertheless; in whatever way
+nevertheless	adv.	in spite of that
+meanwhile	adv.	in the intervening time
+furthermore	adv.	in addition
+moreover	adv.	in addition
+instead	adv.	as an alternative
+rather	adv.	to some degree; preferably
+quite	adv.	to a certain extent; completely
+fairly	adv.	to a moderate degree
+somewhat	adv.	to some extent
+slightly	adv.	to a small degree
+nearly	adv.	almost
+almost	adv.	very nearly
+exactly	adv.	in an exact way
+precisely	adv.	exactly
+properly	adv.	in a proper way
+adequately	adv.	to a sufficient degree
+sufficiently	adv.	enough
+efficiently	adv.	in an efficient way
+effectively	adv.	in an effective way
+successfully	adv.	in a successful way
+carefully	adv.	in a careful way
+attentively	adv.	with attention
+deliberately	adv.	on purpose
+intentionally	adv.	on purpose
+accidentally	adv.	by accident
 definition	n.	a statement of the meaning of a word or phrase
+suggestion	n.	an idea or plan offered for consideration
+spell	v.	to name or write the letters of a word
+spell	n.	a period of activity or condition

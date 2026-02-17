@@ -155,7 +155,7 @@ spell> :q
 | `help`, `?` | Show help with examples |
 | `load PATH`, `:load PATH` | Load dictionary from PATH (dir with .aff, .dic) |
 | `dict` | Show current dictionary path |
-| `define WORD`, `def WORD` | Show definition for WORD (from glossary) |
+| `define WORD`, `def WORD` | Show definition for WORD (from glossary). After "Did you mean …?", **Tab** cycles through suggested words to complete `def` / `define`. |
 | `quit`, `exit`, `:q` | Exit the REPL |
 
 **Default:** Bundled `en_US` dictionary (`data/dict/`) is used when no `--dict-dir` is given.

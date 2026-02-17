@@ -10,6 +10,7 @@
 | `[config]` | Config parsing |
 | `[cli]` | CLI flags (--help, --version) |
 | `[hunspell_engine]` | HunspellEngine (Hunspell is bundled; tests always run) |
+| `[coverage]` | Definition coverage: glossary vs bundled en_US.dic (≥80% required) |
 | `[functional]` | End-to-end spell binary tests |
 | `[fuzz]` | Fuzz and stress tests |
 | `[dyslexic]` | Dyslexic-like misspellings (actual typos) |

@@ -9,6 +9,7 @@
 #include <cctype>
 #include <cstring>
 #include <memory>
+#include <vector>
 
 #ifdef SPELL_HAS_READLINE
 #include <readline/readline.h>
@@ -30,7 +31,7 @@ const char* repl_help =
     "    :load PATH     Same as load\n"
     "    dict           Show current dictionary path\n"
     "    define WORD    Show definition for WORD (from glossary)\n"
-    "    def WORD       Same as define\n"
+    "    def WORD       Same as define (Tab cycles through last \"Did you mean\" suggestions)\n"
     "    quit, exit     Exit the REPL\n"
     "    :q             Shortcut to quit\n\n"
     "  Examples:\n\n"
@@ -57,6 +58,9 @@ const char* prompt = "spell> ";
 #ifdef SPELL_HAS_READLINE
 const char* repl_commands[] = {"help", "?", "load", ":load", "dict", "define", "def", "quit", "exit", ":q", nullptr};
 
+// Last "Did you mean" suggestion words, for Tab-completing "def WORD" / "define WORD"
+static std::vector<std::string> last_suggestion_words;
+
 char* repl_command_generator(const char* text, int state) {
   static size_t i;
   if (state == 0) i = 0;
@@ -69,10 +73,34 @@ char* repl_command_generator(const char* text, int state) {
   return nullptr;
 }
 
+// Complete from last_suggestion_words: filter by prefix, return one per state (cycle).
+char* repl_suggestion_word_generator(const char* text, int state) {
+  static size_t index;
+  if (state == 0) index = 0;
+  std::string prefix(text);
+  while (index < last_suggestion_words.size()) {
+    const std::string& word = last_suggestion_words[index++];
+    if (word.size() >= prefix.size() &&
+        word.compare(0, prefix.size(), prefix) == 0) {
+      return strdup(word.c_str());
+    }
+  }
+  return nullptr;
+}
+
 char** repl_completion(const char* text, int start, int end) {
   (void)end;
   if (start == 0) {
     return rl_completion_matches(text, repl_command_generator);
+  }
+  // After "def " or "define ", complete from last suggestion list (cycle with Tab)
+  const char* line = rl_line_buffer;
+  if (line && !last_suggestion_words.empty()) {
+    std::string s(line);
+    if ((s.size() >= 4 && s.substr(0, 4) == "def ") ||
+        (s.size() >= 8 && s.substr(0, 8) == "define ")) {
+      return rl_completion_matches(text, repl_suggestion_word_generator);
+    }
   }
   return nullptr;
 }
@@ -299,6 +327,11 @@ int run_repl(const ReplConfig& config) {
       if (suggestions.empty()) {
         std::cout << word << ": no suggestions\n";
       } else {
+#ifdef SPELL_HAS_READLINE
+        last_suggestion_words.clear();
+        for (size_t i = 0; i < suggestions.size(); ++i)
+          last_suggestion_words.push_back(suggestions[i].word);
+#endif
         std::cout << "Did you mean: ";
         for (size_t i = 0; i < suggestions.size(); ++i) {
           if (i > 0) std::cout << ", ";

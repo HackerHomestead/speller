@@ -113,6 +113,7 @@ add_executable(spell_tests
   tests/test_hunspell_engine.cpp
   tests/test_functional.cpp
   tests/test_fuzz.cpp
+  tests/test_definition_coverage.cpp
   tests/fuzz_utils.cpp
 )
 target_link_libraries(spell_tests PRIVATE spell_lib Catch2::Catch2WithMain)

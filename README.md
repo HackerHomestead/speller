@@ -56,9 +56,16 @@ In the REPL: type a word to check, `help` for commands, `:q` to quit.
 
 - **[User Manual](docs/MANUAL.md)** — Complete usage guide
 - **[Dependencies](docs/DEPENDENCIES.md)** — Build and runtime deps, package names
+- **[Glossary](docs/GLOSSARY.md)** — Glossary format and how to build/update it (WordNet → Wiktionary → LLM)
+- **[Dictionaries and sources](docs/DICTIONARIES_AND_SOURCES.md)** — Why context clues matter, open-source dict/glossary sources, coverage approach
 - **[Tests](tests/README.md)** — Unit, functional, and fuzz tests
 - **[IDEA.md](IDEA.md)** — Design document
 - **[PLAN.md](PLAN.md)** — Development plan
+
+### Scripts (optional)
+
+- **scripts/build_glossary.py** — Build `data/glossary.txt` from a word list (WordNet, Wiktionary, LLM). Requires Python 3 and `pip install -r scripts/requirements-glossary.txt`.
+- **scripts/update_dict_glossary.py** — Optionally fetch dictionary (LibreOffice en_US), then rebuild glossary. See [docs/GLOSSARY.md](docs/GLOSSARY.md).
 
 ## License
 

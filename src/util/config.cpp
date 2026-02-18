@@ -1,4 +1,5 @@
 #include "util/config.hpp"
+#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -79,6 +80,8 @@ Config Config::from_args(int argc, char* argv[]) {
       cfg.user_dict_path = argv[++i];
     } else if (std::strcmp(arg, "--defs") == 0 && i + 1 < argc) {
       cfg.defs_path = argv[++i];
+    } else if (std::strcmp(arg, "--suggestions") == 0 && i + 1 < argc) {
+      try { cfg.max_suggestions = static_cast<size_t>(std::stoul(argv[++i])); } catch (...) {}
     } else if (std::strcmp(arg, "--fast") == 0) {
       cfg.fast = true;
     } else if (std::strcmp(arg, "--careful") == 0) {

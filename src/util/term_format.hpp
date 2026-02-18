@@ -18,7 +18,7 @@ void term_bold_yellow(std::ostream& out, const std::string& word);
 /// Write a definition line: "  word (pos.) gloss" with bold word and colored gloss.
 void term_print_definition(std::ostream& out, const Definition& def);
 
-/// Write a one-line definition for "OK" case: "  word (pos.) gloss" or just "  gloss".
+/// Write a one-line definition for correct-spelling case: "  word (pos.) gloss" or just "  gloss".
 void term_print_definition_inline(std::ostream& out, const std::string& word, const Definition& def);
 
 }  // namespace spell

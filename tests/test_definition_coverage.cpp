@@ -54,3 +54,30 @@ TEST_CASE("Definition coverage of bundled English dictionary", "[definition_stor
 #endif
 #endif
 }
+
+// Pairs of words that are often confused (look similar or sound similar).
+// Both must have glossary entries so users can tell them apart by meaning.
+TEST_CASE("Confusables have definitions for context clues", "[definition_store][coverage][confusables]") {
+#ifdef SPELL_SOURCE_DIR
+  std::string glossary_path = std::string(SPELL_SOURCE_DIR) + "/data/glossary.txt";
+  auto store = spell::FileDefinitionStore::load(glossary_path);
+  REQUIRE(store);
+
+  // Pairs that appear in the bundled dict; both must have definitions for context clues
+  static const std::vector<std::pair<std::string, std::string>> confusables = {
+      {"there", "their"}, {"where", "were"}, {"right", "wrong"}, {"good", "bad"},
+      {"what", "that"},   {"which", "who"},  {"their", "they"},
+  };
+
+  for (const auto& p : confusables) {
+    bool a = !store->lookup(p.first).empty();
+    bool b = !store->lookup(p.second).empty();
+    if (!a || !b) {
+      INFO("Confusable pair " << p.first << " / " << p.second
+           << " missing definitions (need both for context clues)");
+    }
+    REQUIRE(a);
+    REQUIRE(b);
+  }
+#endif
+}

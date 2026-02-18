@@ -71,12 +71,12 @@ TEST_CASE("spell --check with bundled dict", "[functional]") {
   std::string cmd = std::string(SPELL_BINARY) + " --check hello --dict-dir " + dict_dir;
   std::string out = run_cmd(cmd);
   REQUIRE_FALSE(out.empty());
-  bool valid = (out.find("OK") != std::string::npos) ||
-               (out.find("Could not load") != std::string::npos);
-  bool has_expected = (out.find("hello") != std::string::npos) ||
-                      (out.find("Could not load") != std::string::npos);
+  bool could_not_load = out.find("Could not load") != std::string::npos;
+  bool has_hello = out.find("hello") != std::string::npos;
+  bool is_suggestion = out.find("Did you mean") != std::string::npos;
+  bool valid = could_not_load || (has_hello && !is_suggestion);
   REQUIRE(valid);
-  REQUIRE(has_expected);
+  REQUIRE((has_hello || could_not_load));
 }
 
 TEST_CASE("spell --check misspelling with bundled dict", "[functional]") {

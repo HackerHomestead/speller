@@ -2,6 +2,7 @@
 #include "spell/file_definition_store.hpp"
 #include "spell/hunspell_engine.hpp"
 #include "spell/stub_definition_store.hpp"
+#include "util/affirmations.hpp"
 #include "util/dict_path.hpp"
 #include "util/term_format.hpp"
 #include <iostream>
@@ -36,7 +37,7 @@ const char* repl_help =
     "    :q             Shortcut to quit\n\n"
     "  Examples:\n\n"
     "    spell> hello\n"
-    "    OK\n\n"
+    "    Correct!\n\n"
     "    spell> helo\n"
     "    Did you mean: hello?\n\n"
     "    spell> load /usr/share/hunspell\n"
@@ -315,7 +316,7 @@ int run_repl(const ReplConfig& config) {
     }
 
     if (engine->is_correct(word)) {
-      std::cout << "OK\n";
+      std::cout << random_correct_affirmation() << "\n";
       Definition d = defs->lookup(word);
       if (!d.empty())
         term_print_definition_inline(std::cout, word, d);

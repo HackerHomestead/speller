@@ -1,0 +1,5 @@
+# Optional deps for scripts/build_glossary.py and scripts/update_dict_glossary.py
+# Install: pip install -r scripts/requirements-glossary.txt
+
+nltk>=3.8          # WordNet (run: python -c "import nltk; nltk.download('wordnet'); nltk.download('omw-1.4')")
+requests>=2.28     # Wiktionary API (optional)

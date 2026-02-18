@@ -3,6 +3,7 @@
 #include "spell/repl.hpp"
 #include "spell/stub_definition_store.hpp"
 #include "spell/suggestion_orchestrator.hpp"
+#include "util/affirmations.hpp"
 #include "util/config.hpp"
 #include "util/dict_path.hpp"
 #include "util/term_format.hpp"
@@ -30,6 +31,7 @@ const char* help_text =
     "  --dict-dir PATH  Dictionary dir or .aff file\n"
     "  --user-dict PATH User dictionary\n"
     "  --defs PATH      Glossary file (word<TAB>pos<TAB>definition) for definitions\n"
+    "  --suggestions N  Number of suggestions to show (default: 5)\n"
     "  --file PATH      Read from file\n"
     "  -h, --help       Show this help\n"
     "  -V, --version    Version and build info\n";
@@ -60,7 +62,7 @@ int run_spell(const spell::Config& config) {
       defs = std::make_unique<spell::StubDefinitionStore>();
 
     if (engine->is_correct(config.check_word)) {
-      std::cout << config.check_word << ": OK\n";
+      std::cout << config.check_word << ": " << spell::random_correct_affirmation() << "\n";
       spell::Definition d = defs->lookup(config.check_word);
       if (!d.empty())
         spell::term_print_definition_inline(std::cout, config.check_word, d);

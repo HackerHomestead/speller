@@ -136,13 +136,23 @@ speller/
 
 | # | Task | Status |
 |---|------|--------|
-| 4.1 | Design minimal definition DB format (binary or simple KV) | ⬜ |
-| 4.2 | Implement `MinimalDefinitionStore` (or stub with empty defs) | ⬜ |
-| 4.3 | Script/tool to build DB from WordNet or word list + glosses | ⬜ |
-| 4.4 | Wire `--defs path` into config | ⬜ |
-| 4.5 | Graceful degradation when defs DB missing | ⬜ |
+| 4.1 | Design minimal definition DB format (binary or simple KV) | ✅ (glossary: word\\tpos\\tdef) |
+| 4.2 | Implement `MinimalDefinitionStore` (or stub with empty defs) | ✅ (FileDefinitionStore + stub) |
+| 4.3 | Script/tool to build DB from WordNet or word list + glosses | ✅ (scripts/build_glossary.py) |
+| 4.4 | Wire `--defs path` into config | ✅ |
+| 4.5 | Graceful degradation when defs DB missing | ✅ |
 
-**Deliverable:** `DefinitionStore::lookup(word)` returns definitions when DB present.
+**Deliverable:** `DefinitionStore::lookup(word)` returns definitions when DB present. ✅
+
+### Glossary build pipeline
+
+Scripts in **scripts/** build or update **data/glossary.txt** from a word list (e.g. **data/dict/en_US.dic**):
+
+1. **WordNet** (NLTK) — primary definitions.
+2. **Wiktionary** (API) — fill gaps.
+3. **LLM** (Ollama or OpenAI) — optional, for remaining gaps.
+
+See **[docs/GLOSSARY.md](docs/GLOSSARY.md)** for format, usage, and **scripts/update_dict_glossary.py** for dictionary + glossary update.
 
 ---
 
@@ -217,5 +227,5 @@ Core spell checker is **MVP complete**: REPL by default, `--check`, config file,
 ## Next Steps
 
 1. **Phase 3.2–3.4:** Levenshtein scoring, frequency list, `--suggestions N`
-2. **Phase 4:** Definition store (WordNet-derived or minimal DB)
-3. **Phase 5.3–5.6:** Word-by-word mode, stream mode, accessibility
+2. **Phase 5.3–5.6:** Word-by-word mode, stream mode, accessibility
+3. **Glossary:** Run `scripts/build_glossary.py` or `scripts/update_dict_glossary.py` to refresh definitions; see docs/GLOSSARY.md

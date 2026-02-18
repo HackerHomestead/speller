@@ -136,7 +136,7 @@ Run `spell` with no arguments to enter the REPL:
 spell - Interactive spell checker (type 'help' or '?' for help)
 
 spell> hello
-OK
+Correct!
 
 spell> helo
 Did you mean: hello?
@@ -194,13 +194,15 @@ When you type a correct word or see "Did you mean …?", **spell** can show a sh
   `word<TAB>part_of_speech<TAB>short definition`  
   or `word<TAB>definition` (part of speech optional). Lines starting with `#` are comments.
 - **Default**: When built from source, a default path to `data/glossary.txt` is used if you don’t set one (so definitions work when you run from the project root).
+- **Building the glossary**: You can generate or update the glossary from a word list (e.g. the bundled dictionary) using **scripts/build_glossary.py** (WordNet → Wiktionary → optional LLM). See **[GLOSSARY.md](GLOSSARY.md)** for details and **scripts/update_dict_glossary.py** for dictionary + glossary update.
+- **Correct spelling**: When a word is correct, spell shows a random positive affirmation (e.g. "Correct!", "That's correct!", "Good spelling!") instead of a generic "OK". "OK" is reserved for system actions (e.g. after loading a dictionary).
 - **Display**: In a terminal, the **word** is shown in **bold** and the definition text in color for easier reading. Set the environment variable **NO_COLOR** to disable colors.
 
 Example (with glossary loaded):
 
 ```
 spell> hello
-OK
+Correct!
   hello (interj.) used as a greeting
 
 spell> helo

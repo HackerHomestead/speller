@@ -205,6 +205,22 @@ See **[docs/GLOSSARY.md](docs/GLOSSARY.md)** for format, usage, and **scripts/up
 
 ---
 
+## Phase 8: Distribution & Packaging
+
+**Goal:** Create redistributable builds for sharing.
+
+### Tasks
+
+| # | Task | Status |
+|---|------|--------|
+| 8.1 | Create release build script (build-release.sh) | ⬜ |
+| 8.2 | Bundle dictionary + glossary into tarball/zip | ⬜ |
+| 8.3 | Static build with all dependencies (Hunspell, readline) | ⬜ |
+| 8.4 | Build for multiple architectures (x86_64, ARM) | ⬜ |
+| 8.5 | Create install script or package (deb, rpm, AppImage) | ⬜ |
+
+---
+
 ## Build Dependencies
 
 See **[docs/DEPENDENCIES.md](docs/DEPENDENCIES.md)** for full details and package names.
@@ -228,4 +244,5 @@ Core spell checker is **MVP complete**: REPL by default, `--check`, config file,
 
 1. **Phase 3.2–3.4:** Levenshtein scoring, frequency list, `--suggestions N`
 2. **Phase 5.3–5.6:** Word-by-word mode, stream mode, accessibility
-3. **Glossary:** Run `scripts/build_glossary.py` or `scripts/update_dict_glossary.py` to refresh definitions; see docs/GLOSSARY.md
+3. **Phase 8:** Distribution & packaging for redistributable builds
+4. **Glossary:** Run `scripts/build_glossary.py` or `scripts/update_dict_glossary.py` to refresh definitions; see docs/GLOSSARY.md

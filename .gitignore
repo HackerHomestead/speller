@@ -10,3 +10,6 @@ build/spell_tests
 *.swp
 *~
 .DS_Store
+*.bak
+.cache/
+data/glossary.txt.resume/

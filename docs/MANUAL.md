@@ -42,6 +42,82 @@ sudo cmake --install .   # If install rules are configured
 
 ---
 
+## 2a. Build Optimization
+
+### Why Build Type Matters
+
+By default, CMake builds with **no optimization flags**. This produces a binary with debugging symbols and no compiler optimizations, resulting in a large binary (~1.4 MB for spell).
+
+### Build Type Options
+
+| CMake Build Type | Flags | Use Case |
+|-----------------|-------|----------|
+| `Release` | `-O3 -DNDEBUG` | **Recommended** — fastest execution |
+| `MinSizeRelease` | `-Os -DNDEBUG` | Smaller binary, slightly slower |
+| `RelWithDebInfo` | `-O2 -g` | Balanced (debug + optimize) |
+| `Debug` | `-g` | Development with debug symbols |
+
+### Measuring Binary Size
+
+```bash
+# File size (human-readable)
+ls -lh build/spell
+
+# Section breakdown (TEXT = code, DATA = initialized data)
+size build/spell
+
+# Check linked libraries
+otool -L build/spell    # macOS
+ldd build/spell         # Linux
+```
+
+### Recommended Build Command
+
+```bash
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake --build .
+```
+
+### Additional Optimizations
+
+**Link-Time Optimization (LTO):**
+```bash
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON ..
+```
+
+This enables cross-module inlining, reducing code redundancy between Hunspell and your application. Typical reduction: ~5-10%.
+
+**Strip Symbols:**
+```bash
+strip -Sx build/spell
+```
+
+Removes debug symbols and local symbols. Reversible with `dsymutil` if needed for debugging.
+
+### Size Comparison Results
+
+| Configuration | Size |
+|--------------|------|
+| Default (no optimization) | 1.4 MB |
+| Release (-O3) | 852 KB |
+| Release + LTO | 810 KB |
+| Release + LTO + strip | 788 KB |
+| MinSizeRelease | 937 KB |
+
+### Understanding the Sections (size output)
+
+```
+__TEXT   — Executable code (your + hunspell)
+__DATA   — Initialized global variables
+__OBJC   — Objective-C metadata (unused)
+others   — Virtual memory padding (not actual disk size)
+```
+
+The `ls -lh` command shows actual disk usage; the huge `others` value in `size` is virtual address space, not disk usage.
+
+---
+
 ## 3. Command-Line Options
 
 | Option | Description |

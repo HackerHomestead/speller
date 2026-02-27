@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.14)
-project(spell VERSION 0.4.0 LANGUAGES CXX)
+project(spell VERSION 0.4.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Default to Release build if not specified
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
 
 # -----------------------------------------------------------------------------
 # Dependency checking

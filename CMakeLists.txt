@@ -81,6 +81,7 @@ add_library(spell_lib
   src/spell/hunspell_engine.cpp
   src/spell/suggestion_orchestrator.cpp
   src/spell/repl.cpp
+  src/spell/tokenize.cpp
   src/util/config.cpp
   src/util/dict_path.cpp
   src/util/term_format.cpp
@@ -119,6 +120,7 @@ add_executable(spell_tests
   tests/test_functional.cpp
   tests/test_fuzz.cpp
   tests/test_definition_coverage.cpp
+  tests/test_tokenize.cpp
   tests/fuzz_utils.cpp
 )
 target_link_libraries(spell_tests PRIVATE spell_lib Catch2::Catch2WithMain)

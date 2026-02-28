@@ -232,7 +232,44 @@ spell> :q
 | `load PATH`, `:load PATH` | Load dictionary from PATH (dir with .aff, .dic) |
 | `dict` | Show current dictionary path |
 | `define WORD`, `def WORD` | Show definition for WORD (from glossary). After "Did you mean …?", **Tab** cycles through suggested words to complete `def` / `define`. |
+| `correct TEXT` | Correct a sentence interactively (word-by-word) |
+| `SENTENCE` | Any multi-word input is automatically treated as a sentence to correct |
 | `quit`, `exit`, `:q` | Exit the REPL |
+
+### Sentence Correction
+
+You can correct entire sentences interactively. The REPL will:
+1. Show each misspelled word with numbered suggestions
+2. Prompt you to choose a replacement number
+3. Output the corrected sentence
+
+**Example:**
+
+```
+spell> I haev a probelm
+Original: "I haev a probelm"
+
+I [haev:1:have] a [probelm:1:problem, 2:prob elm, 3:prob-elm, 4:probe]
+
+Enter number to replace misspelled word(s), 'k' to keep original, or 'q' to quit: 1
+Corrected: "I have a problem"
+```
+
+**Using the explicit `correct` command:**
+
+```
+spell> correct This sentance has two erroors
+This [sentance:1:sentence, 2:sentience, 3:entrance, 4:stance, 5:senescent] has two [erroors:1:errors, 2:error]
+
+Enter number: 1
+Corrected: "This sentence has two errors"
+```
+
+**Tips:**
+- Any input with 2+ words is automatically treated as a sentence
+- Enter a number (1-5) to apply that suggestion to all misspelled words
+- `k` or `keep` to keep the original text unchanged
+- `q` or `quit` to cancel
 
 **Default:** Bundled `en_US` dictionary (`data/dict/`) is used when no `--dict-dir` is given.
 

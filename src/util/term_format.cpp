@@ -12,6 +12,7 @@ const char* const DIM = "\033[2m";
 const char* const CYAN = "\033[36m";
 const char* const GREEN = "\033[32m";
 const char* const YELLOW = "\033[33m";
+const char* const RED = "\033[31m";
 const char* const RESET = "\033[0m";
 
 }  // namespace
@@ -27,6 +28,13 @@ bool term_use_color(std::ostream& out) {
 void term_bold(std::ostream& out, const std::string& word) {
   if (term_use_color(out))
     out << BOLD << word << RESET;
+  else
+    out << word;
+}
+
+void term_bold_red(std::ostream& out, const std::string& word) {
+  if (term_use_color(out))
+    out << BOLD << RED << word << RESET;
   else
     out << word;
 }

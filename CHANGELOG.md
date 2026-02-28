@@ -10,6 +10,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - (Phase 2) User dictionary add/learn from interactive mode
 
+## [0.4.1] - 2026-02-28 — Sentence Correction
+
+### Added
+- **Sentence correction**: Type multiple words (2+) in REPL to correct entire sentences interactively
+- **Interactive word-by-word review**: Shows misspelled words with numbered suggestions, prompts for choice
+- **Explicit `correct` command**: Use `correct SENTENCE` for clearer intent
+- **Auto-detection**: Any multi-word input is automatically treated as a sentence
+
+### Documentation
+- **docs/MANUAL.md**: New "Sentence Correction" section with usage examples
+- **PLAN.md**: Added "Future Enhancements" section documenting all correction options
+
+### Build
+- **Default Release build**: CMake now defaults to `Release` build type if not specified
+- Binary size reduced from 1.4MB (debug) to ~800KB (Release + LTO + strip)
+
 ## [0.4.0] - 2026-02-17 — MVP
 
 **MVP status:** Spell checker is feature-complete for core use: interactive REPL, single-word check, bundled dictionary, config-file defaults, and statically linked Hunspell with no system dependency.

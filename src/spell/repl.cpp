@@ -2,6 +2,7 @@
 #include "spell/file_definition_store.hpp"
 #include "spell/hunspell_engine.hpp"
 #include "spell/stub_definition_store.hpp"
+#include "spell/definition_store.hpp"
 #include "util/affirmations.hpp"
 #include "util/dict_path.hpp"
 #include "util/term_format.hpp"
@@ -10,6 +11,7 @@
 #include <cctype>
 #include <cstring>
 #include <memory>
+#include <sstream>
 #include <vector>
 
 #ifdef SPELL_HAS_READLINE
@@ -25,7 +27,7 @@ namespace {
 const char* repl_help =
     "\n  spell REPL - Interactive spell checker\n"
     "  --------------------------------------\n\n"
-    "  Type a word and press Enter to check spelling.\n"
+    "  Type a word or sentence and press Enter to check spelling.\n"
     "  Commands (start with : or use full name):\n\n"
     "    help, ?        Show this help\n"
     "    load PATH      Load dictionary (PATH = dir or path to .aff file)\n"
@@ -33,6 +35,7 @@ const char* repl_help =
     "    dict           Show current dictionary path\n"
     "    define WORD    Show definition for WORD (from glossary)\n"
     "    def WORD       Same as define (Tab cycles through last \"Did you mean\" suggestions)\n"
+    "    correct TEXT   Correct a sentence (interactive word-by-word)\n"
     "    quit, exit     Exit the REPL\n"
     "    :q             Shortcut to quit\n\n"
     "  Examples:\n\n"
@@ -40,6 +43,8 @@ const char* repl_help =
     "    Correct!\n\n"
     "    spell> helo\n"
     "    Did you mean: hello?\n\n"
+    "    spell> correct I haev a probelm\n"
+    "    (shows misspelled words with suggestions, prompts for correction)\n\n"
     "    spell> load /usr/share/hunspell\n"
     "    Loaded dictionary: /usr/share/hunspell (en_US)\n\n"
     "    spell> load ./data/dict/en_US.aff\n"
@@ -57,7 +62,7 @@ const char* repl_help =
 const char* prompt = "spell> ";
 
 #ifdef SPELL_HAS_READLINE
-const char* repl_commands[] = {"help", "?", "load", ":load", "dict", "define", "def", "quit", "exit", ":q", nullptr};
+const char* repl_commands[] = {"help", "?", "load", ":load", "dict", "define", "def", "correct", "quit", "exit", ":q", nullptr};
 
 // Last "Did you mean" suggestion words, for Tab-completing "def WORD" / "define WORD"
 static std::vector<std::string> last_suggestion_words;
@@ -178,7 +183,212 @@ std::string extract_word(const std::string& line) {
   if (lower.size() >= 5 && lower.substr(0, 5) == "check") {
     return trim(t.substr(5));
   }
+  if (lower.size() >= 8 && lower.substr(0, 8) == "correct ") {
+    return "";
+  }
   return t;
+}
+
+struct Token {
+  std::string text;
+  std::string original;
+  bool is_word;
+  bool is_space;
+};
+
+bool is_word_char(char c) {
+  return std::isalpha(static_cast<unsigned char>(c));
+}
+
+std::vector<Token> tokenize_sentence(const std::string& sentence) {
+  std::vector<Token> tokens;
+  std::string current;
+  
+  for (size_t i = 0; i < sentence.size(); ++i) {
+    char c = sentence[i];
+    if (is_word_char(c)) {
+      current += c;
+    } else if (std::isspace(static_cast<unsigned char>(c))) {
+      if (!current.empty()) {
+        Token t;
+        t.text = current;
+        t.original = current;
+        t.is_word = true;
+        t.is_space = false;
+        tokens.push_back(t);
+        current.clear();
+      }
+      Token t;
+      t.text = " ";
+      t.original = " ";
+      t.is_word = false;
+      t.is_space = true;
+      tokens.push_back(t);
+    } else {
+      if (!current.empty()) {
+        Token t;
+        t.text = current;
+        t.original = current;
+        t.is_word = true;
+        t.is_space = false;
+        tokens.push_back(t);
+        current.clear();
+      }
+      Token t;
+      t.text = std::string(1, c);
+      t.original = t.text;
+      t.is_word = false;
+      t.is_space = false;
+      tokens.push_back(t);
+    }
+  }
+  
+  if (!current.empty()) {
+    Token t;
+    t.text = current;
+    t.original = current;
+    t.is_word = true;
+    t.is_space = false;
+    tokens.push_back(t);
+  }
+  
+  return tokens;
+}
+
+std::string to_lower_word(const std::string& s) {
+  return to_lower(s);
+}
+
+void correct_sentence(const std::string& sentence, 
+                      spell::SpellEngine* engine,
+                      spell::DefinitionStore* defs) {
+  std::vector<Token> tokens = tokenize_sentence(sentence);
+  
+  if (tokens.empty()) {
+    std::cout << "No text to correct.\n";
+    return;
+  }
+  
+  std::cout << "\nOriginal: \"" << sentence << "\"\n\n";
+  
+  std::vector<size_t> misspelled_indices;
+  std::vector<std::vector<spell::Suggestion>> all_suggestions;
+  
+  for (size_t i = 0; i < tokens.size(); ++i) {
+    auto& token = tokens[i];
+    if (!token.is_word) {
+      std::cout << token.original;
+      continue;
+    }
+    
+    std::string lower = to_lower_word(token.text);
+    
+    if (engine->is_correct(lower)) {
+      std::cout << token.original;
+    } else {
+      auto suggestions = engine->suggest(lower);
+      std::cout << "[";
+      term_bold_red(std::cout, token.original);
+      std::cout << ":";
+      if (suggestions.empty()) {
+        std::cout << "?]";
+      } else {
+        size_t show_count = std::min(suggestions.size(), size_t(5));
+        for (size_t j = 0; j < show_count; ++j) {
+          if (j > 0) std::cout << ", ";
+          std::cout << (j + 1) << ":";
+          if (!defs->lookup(suggestions[j].word).empty())
+            term_bold_yellow(std::cout, suggestions[j].word);
+          else
+            term_bold(std::cout, suggestions[j].word);
+        }
+        std::cout << "]";
+        misspelled_indices.push_back(i);
+        all_suggestions.push_back(suggestions);
+      }
+    }
+  }
+  std::cout << "\n\n";
+  
+  if (misspelled_indices.empty()) {
+    std::cout << "All words are spelled correctly!\n";
+    return;
+  }
+  
+  std::cout << "Enter number to replace misspelled word(s), 'k' to keep original, or 'q' to quit: ";
+  std::cout << std::flush;
+  
+  std::string response;
+  if (!std::getline(std::cin, response)) return;
+  
+  response = trim(response);
+  
+  if (response == "q" || response == "quit") {
+    std::cout << "Cancelled.\n";
+    return;
+  }
+  
+  if (response == "k" || response == "keep") {
+    std::cout << "Keeping original.\n";
+    return;
+  }
+  
+  int choice = -1;
+  try {
+    choice = std::stoi(response);
+  } catch (...) {
+    std::cout << "Invalid input. Keeping original.\n";
+    return;
+  }
+  
+  if (choice < 1 || choice > 5) {
+    std::cout << "Invalid choice. Keeping original.\n";
+    return;
+  }
+  
+  size_t choice_idx = static_cast<size_t>(choice - 1);
+  
+  for (size_t mi = 0; mi < misspelled_indices.size(); ++mi) {
+    size_t token_idx = misspelled_indices[mi];
+    auto& suggestions = all_suggestions[mi];
+    if (choice_idx < suggestions.size()) {
+      tokens[token_idx].text = suggestions[choice_idx].word;
+      if (!tokens[token_idx].original.empty() && 
+          tokens[token_idx].original[0] >= 'A' && 
+          tokens[token_idx].original[0] <= 'Z') {
+        tokens[token_idx].text[0] = static_cast<char>(std::toupper(tokens[token_idx].text[0]));
+      }
+    }
+  }
+  
+  std::cout << "Corrected: \"";
+  for (const auto& token : tokens) {
+    std::cout << token.text;
+  }
+  std::cout << "\"\n";
+}
+
+bool is_correct_command(const std::string& line, std::string& out_sentence) {
+  std::string t = trim(line);
+  if (t.empty()) return false;
+  std::string lower = to_lower(t);
+  if (lower.size() > 8 && lower.substr(0, 8) == "correct ") {
+    out_sentence = trim(t.substr(8));
+    return !out_sentence.empty();
+  }
+  if (t.find(' ') != std::string::npos) {
+    size_t word_count = 0;
+    std::string word;
+    std::istringstream iss(t);
+    while (iss >> word) {
+      word_count++;
+    }
+    if (word_count > 1) {
+      out_sentence = t;
+      return true;
+    }
+  }
+  return false;
 }
 
 }  // namespace
@@ -300,6 +510,20 @@ int run_repl(const ReplConfig& config) {
       } else {
         term_print_definition(std::cout, d);
       }
+      continue;
+    }
+
+    std::string sentence;
+    if (is_correct_command(line, sentence)) {
+      if (!engine || !engine->is_loaded()) {
+#ifndef SPELL_HAS_HUNSPELL
+        std::cout << "(spell check unavailable — build has no Hunspell; install libhunspell-dev and rebuild)\n";
+#else
+        std::cout << "(no dictionary — use 'load PATH', --dict-dir, or set dict_dir in ~/.config/spell/config)\n";
+#endif
+        continue;
+      }
+      correct_sentence(sentence, engine.get(), defs.get());
       continue;
     }
 

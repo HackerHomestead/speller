@@ -166,13 +166,13 @@ See **[docs/GLOSSARY.md](docs/GLOSSARY.md)** for format, usage, and **scripts/up
 |---|------|--------|
 | 5.1 | REPL mode (default when no args) | ✅ |
 | 5.2 | REPL: help, quit, autocomplete (readline), history | ✅ |
-| 5.3 | Word-by-word mode: 1–5 (pick), s (skip), u (undo), d (define) | ⬜ |
+| 5.3 | Sentence correction: interactive word-by-word review | ✅ (v0.4.1) |
 | 5.4 | Implement stream mode (stdin/file → stdout) | ⬜ |
 | 5.5 | Config: `--fast` vs `--careful` (auto-apply vs prompt) | ⬜ |
 | 5.6 | Accessibility: verbosity, spacing, high-contrast options | ⬜ |
 | 5.7 | Use ANSI terminal; add ncurses only if needed | ⬜ |
 
-**Deliverable:** Full interactive and stream workflows. ✅ (REPL)
+**Deliverable:** Full interactive and stream workflows. ✅ (REPL + sentence correction)
 
 ---
 
@@ -243,6 +243,48 @@ Core spell checker is **MVP complete**: REPL by default, `--check`, config file,
 ## Next Steps
 
 1. **Phase 3.2–3.4:** Levenshtein scoring, frequency list, `--suggestions N`
-2. **Phase 5.3–5.6:** Word-by-word mode, stream mode, accessibility
+2. **Phase 5.4–5.6:** Stream mode, accessibility options
 3. **Phase 8:** Distribution & packaging for redistributable builds
 4. **Glossary:** Run `scripts/build_glossary.py` or `scripts/update_dict_glossary.py` to refresh definitions; see docs/GLOSSARY.md
+
+---
+
+## Future Enhancements
+
+### Advanced Sentence Correction
+
+#### Option 1: Tokenize + Per-Word Correction (Simplest)
+- Split sentence into words using whitespace/punctuation
+- Check each word individually using existing `HunspellEngine::suggest()`
+- Output sentence with misspellings highlighted and suggestions inline
+
+**Pros:** Reuses existing infrastructure, easy to implement
+**Cons:** Doesn't understand context (homophones like "there/their/they're")
+
+#### Option 2: Interactive Word-by-Word Review (Current)
+- Same tokenization as Option 1
+- For each misspelled word, prompt user to:
+  - Accept a suggestion (1, 2, 3...)
+  - Keep original
+  - Skip remaining misspellings
+- Build corrected sentence progressively
+
+**Status:** ✅ Implemented (v0.4.1)
+**Pros:** User maintains control, familiar UX
+**Cons:** May be slow for long sentences
+
+#### Option 3: Context-Aware Correction (Future)
+- Use language model or n-gram for context
+- E.g., "their is" → detect "there/their/they're" based on following word
+- Requires additional dependency
+
+**Pros:** Smart corrections
+**Cons:** Complex, adds dependency, may not fit "offline-first" philosophy
+**Priority:** Low (requires significant additional work)
+
+#### Option 4: Full Stream Mode
+- Read entire paragraphs/files, process word-by-word
+- Auto-correct with configurable confidence threshold
+- Output corrected text to stdout
+
+**Priority:** Medium (Phase 5.4)

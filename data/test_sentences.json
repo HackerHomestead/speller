@@ -1,0 +1,756 @@
+{
+  "description": "Test sentences for spell correction - Hitchhiker's Guide to the Galaxy themed",
+  "total": 150,
+  "sentences": [
+    {
+      "original": "Dont panic",
+      "corrected": "Don't panic",
+      "incorrect_count": 1
+    },
+    {
+      "original": "The anser to life the universe and everthing",
+      "corrected": "The answer to life the universe and everything",
+      "incorrect_count": 2
+    },
+    {
+      "original": "I dont mean to interupt",
+      "corrected": "I don't mean to interrupt",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Ths is some sort of droide",
+      "corrected": "This is some sort of droid",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Please to be keeping the noice down",
+      "corrected": "Please to be keeping the noise down",
+      "incorrect_count": 1
+    },
+    {
+      "original": "Life is like a box of choclate",
+      "corrected": "Life is like a box of chocolates",
+      "incorrect_count": 1
+    },
+    {
+      "original": "So long and thankyou for all the fish",
+      "corrected": "So long and thank you for all the fish",
+      "incorrect_count": 6
+    },
+    {
+      "original": "The ship needs a new computor",
+      "corrected": "The ship needs a new computer",
+      "incorrect_count": 1
+    },
+    {
+      "original": "That is some sort of goverment vehicle",
+      "corrected": "That is some sort of government vehicle",
+      "incorrect_count": 1
+    },
+    {
+      "original": "I have a bery important mesage",
+      "corrected": "I have a very important message",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The anser is fourty two",
+      "corrected": "The answer is forty two",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Plenet earth is mostley harmles",
+      "corrected": "Planet earth is mostly harmless",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The infinate improbability drive",
+      "corrected": "The infinite improbability drive",
+      "incorrect_count": 1
+    },
+    {
+      "original": "Zaphod has stollen the ship",
+      "corrected": "Zaphod has stolen the ship",
+      "incorrect_count": 1
+    },
+    {
+      "original": "Magrathea is a legendry planet",
+      "corrected": "Magrathea is a legendary planet",
+      "incorrect_count": 1
+    },
+    {
+      "original": "You cant sut the bread with a knife",
+      "corrected": "You can't cut the bread with a knife",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Arthur has lost his toowel",
+      "corrected": "Arthur has lost his towel",
+      "incorrect_count": 1
+    },
+    {
+      "original": "The gide says dont panic",
+      "corrected": "The guide says don't panic",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Babel fish is a small yello fish",
+      "corrected": "Babel fish is a small yellow fish",
+      "incorrect_count": 1
+    },
+    {
+      "original": "Hello I am from a small planet called earth",
+      "corrected": "Hello I am from a small planet called earth",
+      "incorrect_count": 0
+    },
+    {
+      "original": "The answer is definatly forty two",
+      "corrected": "The answer is definitely forty two",
+      "incorrect_count": 1
+    },
+    {
+      "original": "Space is big really very incredably big",
+      "corrected": "Space is big really very incredibly big",
+      "incorrect_count": 1
+    },
+    {
+      "original": "I am totaly not from around here",
+      "corrected": "I am totally not from around here",
+      "incorrect_count": 1
+    },
+    {
+      "original": "Vogons are the third worst poeters in the univers",
+      "corrected": "Vogons are the third worst poets in the universe",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The restaurant at the end of the univers",
+      "corrected": "The restaurant at the end of the universe",
+      "incorrect_count": 1
+    },
+    {
+      "original": "Dolphins are totaly weird but quite smart",
+      "corrected": "Dolphins are totally weird but quite smart",
+      "incorrect_count": 1
+    },
+    {
+      "original": "I was just tryimg to be helpful",
+      "corrected": "I was just trying to be helpful",
+      "incorrect_count": 1
+    },
+    {
+      "original": "The Earth was totaly destroyed for a hypperlane",
+      "corrected": "The Earth was totally destroyed for a hyperspace bypass",
+      "incorrect_count": 3
+    },
+    {
+      "original": "Ford Prefect was a resercher for the gide",
+      "corrected": "Ford Prefect was a researcher for the guide",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Sustems of outragously simmilar importence",
+      "corrected": "Systems of outrageously similar importance",
+      "incorrect_count": 4
+    },
+    {
+      "original": "The wold is whot you make of it",
+      "corrected": "The world is what you make of it",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Plannet earth is mostley harmles with some exceptions",
+      "corrected": "Planet earth is mostly harmless with some exceptions",
+      "incorrect_count": 3
+    },
+    {
+      "original": "I have discovered a wonerful new way to serve tea",
+      "corrected": "I have discovered a wonderful new way to serve tea",
+      "incorrect_count": 1
+    },
+    {
+      "original": "The probability of that hapening is one in millions",
+      "corrected": "The probability of that happening is one in millions",
+      "incorrect_count": 1
+    },
+    {
+      "original": "Eddie says hello and askes if you want somthing",
+      "corrected": "Eddie says hello and asks if you want something",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Please dont press the red button tht has a lable saying dont press",
+      "corrected": "Please don't press the red button that has a label saying don't press",
+      "incorrect_count": 4
+    },
+    {
+      "original": "The meaning of liff is rather profund",
+      "corrected": "The meaning of Liff is rather profound",
+      "incorrect_count": 1
+    },
+    {
+      "original": "I am haveing a mid-life crisis about being a computr",
+      "corrected": "I am having a mid-life crisis about being a computer",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Screaming is ussualy not the best respnse",
+      "corrected": "Screaming is usually not the best response",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The great green arklesiester is a wonder of the univers",
+      "corrected": "The great green Arkleseizure is a wonder of the universe",
+      "incorrect_count": 2
+    },
+    {
+      "original": "I was sole into slavery by a very nasty man caled Vogons",
+      "corrected": "I was sold into slavery by a very nasty man called Vogons",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The univers is a very big place wich is full of very strange peopel",
+      "corrected": "The universe is a very big place which is full of very strange people",
+      "incorrect_count": 3
+    },
+    {
+      "original": "Fenchurch flew into a panick when she saw the book",
+      "corrected": "Fenchurch flew into a panic when she saw the book",
+      "incorrect_count": 1
+    },
+    {
+      "original": "Eddie is a computor with a very personleety",
+      "corrected": "Eddie is a computer with a very personality",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The proffesor was very exsited about the descovery",
+      "corrected": "The professor was very excited about the discovery",
+      "incorrect_count": 3
+    },
+    {
+      "original": "There is a artial connecting the two computers",
+      "corrected": "There is an arterial connecting the two computers",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Zaphod was beeing very carefull not to get caught",
+      "corrected": "Zaphod was being very careful not to get caught",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The ship computer has a wonderfull sence of humore",
+      "corrected": "The ship computer has a wonderful sense of humor",
+      "incorrect_count": 3
+    },
+    {
+      "original": "All the laws of phisics have been suspendid",
+      "corrected": "All the laws of physics have been suspended",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Magrathea is a legendry planet that builds custome planets",
+      "corrected": "Magrathea is a legendary planet that builds custom planets",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The infinatte improbability drive goes thrugh the ship",
+      "corrected": "The infinite improbability drive goes through the ship",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Zaphod has stollen the heart of golld",
+      "corrected": "Zaphod has stolen the heart of gold",
+      "incorrect_count": 2
+    },
+    {
+      "original": "You cant posibley understand the respose of a computer",
+      "corrected": "You can't possibly understand the response of a computer",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The babel fish is totaly dependeble on sound",
+      "corrected": "The Babel fish is totally dependable on sound",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Arthur was carring a bag with all his possesions",
+      "corrected": "Arthur was carrying a bag with all his possessions",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Ford Prefect new that earth was about to be destroyed",
+      "corrected": "Ford Prefect knew that earth was about to be destroyed",
+      "incorrect_count": 1
+    },
+    {
+      "original": "The guilde has an entry for ever single planet",
+      "corrected": "The guide has an entry for every single planet",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Vogons are known for there terrible poitry",
+      "corrected": "Vogons are known for their terrible poetry",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The ship computr was actuly alive",
+      "corrected": "The ship computer was actually alive",
+      "incorrect_count": 2
+    },
+    {
+      "original": "There are bilions of stars in the galexy",
+      "corrected": "There are billions of stars in the galaxy",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Trillian was wondeing why the ship was so quiet",
+      "corrected": "Trillian was wondering why the ship was so quiet",
+      "incorrect_count": 1
+    },
+    {
+      "original": "The resraunt at the end of time",
+      "corrected": "The restaurant at the end of time",
+      "incorrect_count": 1
+    },
+    {
+      "original": "I am totaly amazed by the sized of space",
+      "corrected": "I am totally amazed by the size of space",
+      "incorrect_count": 2
+    },
+    {
+      "original": "You have to get the paperwrok done",
+      "corrected": "You have to get the paperwork done",
+      "incorrect_count": 1
+    },
+    {
+      "original": "The president of the galatic goverment is very important",
+      "corrected": "The president of the galactic government is very important",
+      "incorrect_count": 2
+    },
+    {
+      "original": "I cant posibley comment on that aligation",
+      "corrected": "I can't possibly comment on that allegation",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The earth was destoyed for no good reson",
+      "corrected": "The earth was destroyed for no good reason",
+      "incorrect_count": 2
+    },
+    {
+      "original": "I have met a man from betelgeuse he was wondeful and very confuzed",
+      "corrected": "I have met a man from Betelgeuse he was wonderful and very confused",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The univers is a very big place wich is full of very strange peopel and excaping concience",
+      "corrected": "The universe is a very big place which is full of very strange people and escaping consciousness",
+      "incorrect_count": 5
+    },
+    {
+      "original": "Zaphod Beeblebrox was the presidnet of the galatic goverment and had two heads and three arms",
+      "corrected": "Zaphod Beeblebrox was the president of the galactic government and had two heads and three arms",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The great green arklesiester is a wonder of the univers that has benn describbed in legind",
+      "corrected": "The great green Arkleseizure is a wonder of the universe that has been described in legend",
+      "incorrect_count": 5
+    },
+    {
+      "original": "Eddie the computr was talkkng to himsell about the meaning of liff and everthing",
+      "corrected": "Eddie the computer was talking to himself about the meaning of Liff and everything",
+      "incorrect_count": 4
+    },
+    {
+      "original": "The infinate improbability drive is realy the most wonderfull way to travle",
+      "corrected": "The infinite improbability drive is really the most wonderful way to travel",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Fenchurch who had flied into space was totaly amased by the sizeof the univers",
+      "corrected": "Fenchurch who had flown into space was totally amazed by the size of the universe",
+      "incorrect_count": 7
+    },
+    {
+      "original": "The babbel fish is a small yello fish that feeds on brainwave enery not thoughs",
+      "corrected": "The Babel fish is a small yellow fish that feeds on brainwave energy not thoughts",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Vogon poitry is the thrid worst thing in the univers after entropic heat debt",
+      "corrected": "Vogon poetry is the third worst thing in the universe after entropic heat debt",
+      "incorrect_count": 3
+    },
+    {
+      "original": "I was beeing very carefull not to press the big red button that says do not press",
+      "corrected": "I was being very careful not to press the big red button that says do not press",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Arthur Dent had lost his toowel and was totaly confuzed about what to do next",
+      "corrected": "Arthur Dent had lost his towel and was totally confused about what to do next",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The resercher from the guilde was lookkng for a planet that had some form of intellegence",
+      "corrected": "The researcher from the guide was looking for a planet that had some form of intelligence",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Ford Prefect was totaly surpised when he heard that earth was about to be destroyed",
+      "corrected": "Ford Prefect was totally surprised when he heard that earth was about to be destroyed",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The computer that ran the ship had developeed a personelity and was very sarcastic",
+      "corrected": "The computer that ran the ship had developed a personality and was very sarcastic",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Dolphiens are totaly smater than humens and know about the answer to everthing",
+      "corrected": "Dolphins are totally smarter than humans and know about the answer to everything",
+      "incorrect_count": 5
+    },
+    {
+      "original": "The planet whose name must not be menttoned is totaly incredable and very dangerouse",
+      "corrected": "The planet whose name must not be mentioned is totally incredible and very dangerous",
+      "incorrect_count": 4
+    },
+    {
+      "original": "I cant posibley exsplain why the ship was makking that noise and what the computer was thiking",
+      "corrected": "I can't possibly explain why the ship was making noise and what the computer was thinking",
+      "incorrect_count": 12
+    },
+    {
+      "original": "The profounder meaning of liff is somthing that has bin discused by many filosofer",
+      "corrected": "The profound meaning of Liff is something that has been discussed by many philosophers",
+      "incorrect_count": 5
+    },
+    {
+      "original": "There are milions of planets in the galexy and each one has its own culter and langwage",
+      "corrected": "There are millions of planets in the galaxy and each one has its own culture and language",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Zaphod was beeing his usuall carefull self when he stoll the ship from the goverment",
+      "corrected": "Zaphod was being his usual careful self when he stole the ship from the government",
+      "incorrect_count": 5
+    },
+    {
+      "original": "The answer is definatly not forty two because the quetion was wrong",
+      "corrected": "The answer is definitely not forty two because the question was wrong",
+      "incorrect_count": 2
+    },
+    {
+      "original": "I am totaly fed up with this computr that keeps askng me about liff",
+      "corrected": "I am totally fed up with this computer that keeps asking me about Liff",
+      "incorrect_count": 3
+    },
+    {
+      "original": "Ford Prefect new that he was in truble when the Vogons startted reasding poitry",
+      "corrected": "Ford Prefect knew that he was in trouble when the Vogons started reading poetry",
+      "incorrect_count": 5
+    },
+    {
+      "original": "The galatic courts were totaly unfair and favord the rich and powerfull",
+      "corrected": "The galactic courts were totally unfair and favored the rich and powerful",
+      "incorrect_count": 4
+    },
+    {
+      "original": "I cant posibley compreend why anyon would want to distroy such a nic planet",
+      "corrected": "I can't possibly comprehend why anyone would want to destroy such a nice planet",
+      "incorrect_count": 6
+    },
+    {
+      "original": "The resrtaunt was very exclusiv and onley the vip customers were alowed",
+      "corrected": "The restaurant was very exclusive and only the VIP customers were allowed",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Earth is totaly unimportent in the grand schem of the univers",
+      "corrected": "Earth is totally unimportant in the grand scheme of the universe",
+      "incorrect_count": 4
+    },
+    {
+      "original": "I was beeing very patient while the computr calculatted the anser to everthing",
+      "corrected": "I was being very patient while the computer calculated the answer to everything",
+      "incorrect_count": 5
+    },
+    {
+      "original": "The great prophesy of the goly planet was totaly wronge and misundersood",
+      "corrected": "The great prophecy of the holy planet was totally wrong and misunderstood",
+      "incorrect_count": 5
+    },
+    {
+      "original": "You cant posibley imagan how big space realy is until you travle thrugh it",
+      "corrected": "You can't possibly imagine how big space really is until you travel through it",
+      "incorrect_count": 6
+    },
+    {
+      "original": "I was totaly shocked when I herd that the earth was gonne be destroyed",
+      "corrected": "I was totally shocked when I heard that the earth was going to be destroyed",
+      "incorrect_count": 6
+    },
+    {
+      "original": "The ship computr had developeed a sence of humore and was always makking jokes",
+      "corrected": "The ship computer had developed a sense of humor and was always making jokes",
+      "incorrect_count": 5
+    },
+    {
+      "original": "Vogons are totaly devoid of any compasion or understnding for others",
+      "corrected": "Vogons are totally devoid of any compassion or understanding for others",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The anser to the ultamate quetion about liff the univers and everthing",
+      "corrected": "The answer to the ultimate question about Liff the universe and everything",
+      "incorrect_count": 5
+    },
+    {
+      "original": "I am totaly exausted from trying to undesrtand this complcated situashun",
+      "corrected": "I am totally exhausted from trying to understand this complicated situation",
+      "incorrect_count": 5
+    },
+    {
+      "original": "The galatic president was beeing very unresonable about the destuction of earth",
+      "corrected": "The galactic president was being very unreasonable about the destruction of earth",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Ford Prefect had bin travelng for years and new ever single planet in the galexy",
+      "corrected": "Ford Prefect had been traveling for years and knew every single planet in the galaxy",
+      "incorrect_count": 5
+    },
+    {
+      "original": "I was totaly amazed when I herd that dolphins were actualy very intellegent",
+      "corrected": "I was totally amazed when I heard that dolphins were actually very intelligent",
+      "incorrect_count": 4
+    },
+    {
+      "original": "The ship was totaly destroyed but the computr and Eddie survaived",
+      "corrected": "The ship was totally destroyed but the computer and Eddie survived",
+      "incorrect_count": 3
+    },
+    {
+      "original": "VogonCommander was totaly bent on destoying the earth for no good reson",
+      "corrected": "Vogon Commander was totally bent on destroying the earth for no good reason",
+      "incorrect_count": 13
+    },
+    {
+      "original": "I cant posibley remember how I got onto this planet or what my name actualy is",
+      "corrected": "I can't possibly remember how I got onto this planet or what my name actually is",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The great journey through space has taugh me many importent lessons",
+      "corrected": "The great journey through space has taught me many important lessons",
+      "incorrect_count": 2
+    },
+    {
+      "original": "All the navagational computrs were tottaly broken and no one knew whre they were",
+      "corrected": "All the navigational computers were totally broken and no one knew where they were",
+      "incorrect_count": 4
+    },
+    {
+      "original": "I was beeing very quiet so as not to woke the sleping computr",
+      "corrected": "I was being very quiet so as not to wake the sleeping computer",
+      "incorrect_count": 4
+    },
+    {
+      "original": "The final messge from the earth said dont panic and thankyou for the fish",
+      "corrected": "The final message from the earth said don't panic and thank you for the fish",
+      "incorrect_count": 7
+    },
+    {
+      "original": "Arthur had lost ever single posession and was totaly dependdent on Ford",
+      "corrected": "Arthur had lost every single possession and was totally dependent on Ford",
+      "incorrect_count": 4
+    },
+    {
+      "original": "The most importent thing in the univers is actualy a cup of tea",
+      "corrected": "The most important thing in the universe is actually a cup of tea",
+      "incorrect_count": 3
+    },
+    {
+      "original": "I was totaly unawre that the ship had developeed a conshense",
+      "corrected": "I was totally unaware that the ship had developed a conscience",
+      "incorrect_count": 4
+    },
+    {
+      "original": "The computr said that the anser was wrong and that we should try again",
+      "corrected": "The computer said that the answer was wrong and that we should try again",
+      "incorrect_count": 2
+    },
+    {
+      "original": "Zaphod was totaly obsessed with himself and spent hours lokking at his reflection",
+      "corrected": "Zaphod was totally obsessed with himself and spent hours looking at his reflection",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The galatic goverment was totaly corrupt and needed to be overhalled",
+      "corrected": "The galactic government was totally corrupt and needed to be overhauled",
+      "incorrect_count": 4
+    },
+    {
+      "original": "I cant posibley undrestand why the dolphins left earth before it was destoyed",
+      "corrected": "I can't possibly understand why the dolphins left earth before it was destroyed",
+      "incorrect_count": 4
+    },
+    {
+      "original": "The infinate improbability drive made everthing totaly unpredictible and crazy",
+      "corrected": "The infinite improbability drive made everything totally unpredictable and crazy",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Eddie was always very cheery and made funny comments about everthing",
+      "corrected": "Eddie was always very cheerful and made funny comments about everything",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The planet of the apes was totaly differnt from what we expected",
+      "corrected": "The planet of the apes was totally different from what we expected",
+      "incorrect_count": 2
+    },
+    {
+      "original": "I was totaly unawre that I was speakng to a computer and not a real person",
+      "corrected": "I was totally unaware that I was speaking to a computer and not a real person",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The resrvaition for the restraunt at the end of time was totaly impossable to get",
+      "corrected": "The reservation for the restaurant at the end of time was totally impossible to get",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Vogons have no sence of humore and thier poitry is absolutly terible",
+      "corrected": "Vogons have no sense of humor and their poetry is absolutely terrible",
+      "incorrect_count": 6
+    },
+    {
+      "original": "I have totaly lost my memory and cant remembr anything about my past",
+      "corrected": "I have totally lost my memory and can't remember anything about my past",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The universe is filld with incredable things that defey any explantion",
+      "corrected": "The universe is filled with incredible things that defy any explanation",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Ford Prefect new that he had to leave earth befor it was destoyed by the Vogons",
+      "corrected": "Ford Prefect knew that he had to leave earth before it was destroyed by the Vogons",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The anser to everthing is actualy quite simple when you think about it",
+      "corrected": "The answer to everything is actually quite simple when you think about it",
+      "incorrect_count": 3
+    },
+    {
+      "original": "I was totaly shocked to discovr that the computer had become sentiant",
+      "corrected": "I was totally shocked to discover that the computer had become sentient",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The infinate space betwen stars is absolutly beautiful and mesmorizing",
+      "corrected": "The infinite space between stars is absolutely beautiful and mesmerizing",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Trillian was totaly capapble of handeling any situashun that came her way",
+      "corrected": "Trillian was totally capable of handling any situation that came her way",
+      "incorrect_count": 4
+    },
+    {
+      "original": "The legend of the goly planet has bin passed down for thosands of years",
+      "corrected": "The legend of the holy planet has been passed down for thousands of years",
+      "incorrect_count": 3
+    },
+    {
+      "original": "I cant posibley recomend this form of travle to anyone with a weak hart",
+      "corrected": "I can't possibly recommend this form of travel to anyone with a weak heart",
+      "incorrect_count": 5
+    },
+    {
+      "original": "The computr was totaly obssesed with numbers and calculations all day",
+      "corrected": "The computer was totally obsessed with numbers and calculations all day",
+      "incorrect_count": 3
+    },
+    {
+      "original": "Zaphod had stollen two ships and was now the most wnated criminal in the galexy",
+      "corrected": "Zaphod had stolen two ships and was now the most wanted criminal in the galaxy",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The galatic arm was filld with stars planets and other celestrial bodies",
+      "corrected": "The galactic arm was filled with stars planets and other celestial bodies",
+      "incorrect_count": 3
+    },
+    {
+      "original": "I was totaly unprepared for the incredable sights I saw in outer space",
+      "corrected": "I was totally unprepared for the incredible sights I saw in outer space",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The great green arklesiester moved with purpous and intent toward its destny",
+      "corrected": "The great green Arkleseizure moved with purpose and intent toward its destiny",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The ship computr was talkkng to itslef about the meaning of existnce",
+      "corrected": "The ship computer was talking to itself about the meaning of existence",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Vogon Admiral was totaly determined to catch the runnaway crimnal",
+      "corrected": "Vogon Admiral was totally determined to catch the runaway criminal",
+      "incorrect_count": 3
+    },
+    {
+      "original": "I cant posibley discribe the beautey of the nebula we passd through",
+      "corrected": "I can't possibly describe the beauty of the nebula we passed through",
+      "incorrect_count": 5
+    },
+    {
+      "original": "The ultamate weapon was totaly inefectve against the tiny planet earth",
+      "corrected": "The ultimate weapon was totally ineffective against the tiny planet earth",
+      "incorrect_count": 3
+    },
+    {
+      "original": "Ford Prefect had travled to many planets and knew all about their cutture",
+      "corrected": "Ford Prefect had traveled to many planets and knew all about their culture",
+      "incorrect_count": 2
+    },
+    {
+      "original": "The computer screen flashd importent messeges about the ships conditon",
+      "corrected": "The computer screen flashed important messages about the ship's condition",
+      "incorrect_count": 5
+    },
+    {
+      "original": "I was totaly amased when the dolphin explaied the answr to everthing",
+      "corrected": "I was totally amazed when the dolphin explained the answer to everything",
+      "incorrect_count": 5
+    },
+    {
+      "original": "The galatic federation was totaly powerles to stop the Vogons destoying earth",
+      "corrected": "The galactic federation was totally powerless to stop the Vogons destroying earth",
+      "incorrect_count": 4
+    },
+    {
+      "original": "Trillian took controll of the ship with great skll and determintion",
+      "corrected": "Trillian took control of the ship with great skill and determination",
+      "incorrect_count": 3
+    },
+    {
+      "original": "The babel fish translatd ever single language in the univers perfectly",
+      "corrected": "The Babel fish translated every single language in the universe perfectly",
+      "incorrect_count": 3
+    },
+    {
+      "original": "I was beeing chased by a Ravenous Bugblatter Beast and neaded a place to hide",
+      "corrected": "I was being chased by a Ravenous Bugblatter Beast and needed a place to hide",
+      "incorrect_count": 2
+    }
+  ]
+}

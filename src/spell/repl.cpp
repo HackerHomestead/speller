@@ -3,6 +3,7 @@
 #include "spell/hunspell_engine.hpp"
 #include "spell/stub_definition_store.hpp"
 #include "spell/definition_store.hpp"
+#include "spell/tokenize.hpp"
 #include "util/affirmations.hpp"
 #include "util/dict_path.hpp"
 #include "util/term_format.hpp"
@@ -36,6 +37,7 @@ const char* repl_help =
     "    define WORD    Show definition for WORD (from glossary)\n"
     "    def WORD       Same as define (Tab cycles through last \"Did you mean\" suggestions)\n"
     "    correct TEXT   Correct a sentence (interactive word-by-word)\n"
+    "    rework TEXT    Rework mode: retype sentence to build muscle memory\n"
     "    quit, exit     Exit the REPL\n"
     "    :q             Shortcut to quit\n\n"
     "  Examples:\n\n"
@@ -45,6 +47,8 @@ const char* repl_help =
     "    Did you mean: hello?\n\n"
     "    spell> correct I haev a probelm\n"
     "    (shows misspelled words with suggestions, prompts for correction)\n\n"
+    "    spell> rework I haev a probelm\n"
+    "    (retype sentence, misspelled words shown in red, Tab for suggestions)\n\n"
     "    spell> load /usr/share/hunspell\n"
     "    Loaded dictionary: /usr/share/hunspell (en_US)\n\n"
     "    spell> load ./data/dict/en_US.aff\n"
@@ -62,7 +66,7 @@ const char* repl_help =
 const char* prompt = "spell> ";
 
 #ifdef SPELL_HAS_READLINE
-const char* repl_commands[] = {"help", "?", "load", ":load", "dict", "define", "def", "correct", "quit", "exit", ":q", nullptr};
+const char* repl_commands[] = {"help", "?", "load", ":load", "dict", "define", "def", "correct", "rework", "quit", "exit", ":q", nullptr};
 
 // Last "Did you mean" suggestion words, for Tab-completing "def WORD" / "define WORD"
 static std::vector<std::string> last_suggestion_words;
@@ -189,72 +193,6 @@ std::string extract_word(const std::string& line) {
   return t;
 }
 
-struct Token {
-  std::string text;
-  std::string original;
-  bool is_word;
-  bool is_space;
-};
-
-bool is_word_char(char c) {
-  return std::isalpha(static_cast<unsigned char>(c));
-}
-
-std::vector<Token> tokenize_sentence(const std::string& sentence) {
-  std::vector<Token> tokens;
-  std::string current;
-  
-  for (size_t i = 0; i < sentence.size(); ++i) {
-    char c = sentence[i];
-    if (is_word_char(c)) {
-      current += c;
-    } else if (std::isspace(static_cast<unsigned char>(c))) {
-      if (!current.empty()) {
-        Token t;
-        t.text = current;
-        t.original = current;
-        t.is_word = true;
-        t.is_space = false;
-        tokens.push_back(t);
-        current.clear();
-      }
-      Token t;
-      t.text = " ";
-      t.original = " ";
-      t.is_word = false;
-      t.is_space = true;
-      tokens.push_back(t);
-    } else {
-      if (!current.empty()) {
-        Token t;
-        t.text = current;
-        t.original = current;
-        t.is_word = true;
-        t.is_space = false;
-        tokens.push_back(t);
-        current.clear();
-      }
-      Token t;
-      t.text = std::string(1, c);
-      t.original = t.text;
-      t.is_word = false;
-      t.is_space = false;
-      tokens.push_back(t);
-    }
-  }
-  
-  if (!current.empty()) {
-    Token t;
-    t.text = current;
-    t.original = current;
-    t.is_word = true;
-    t.is_space = false;
-    tokens.push_back(t);
-  }
-  
-  return tokens;
-}
-
 std::string to_lower_word(const std::string& s) {
   return to_lower(s);
 }
@@ -308,60 +246,118 @@ void correct_sentence(const std::string& sentence,
       }
     }
   }
-  std::cout << "\n\n";
+  std::cout << "\n";
   
   if (misspelled_indices.empty()) {
     std::cout << "All words are spelled correctly!\n";
     return;
   }
   
-  std::cout << "Enter number to replace misspelled word(s), 'k' to keep original, or 'q' to quit: ";
-  std::cout << std::flush;
+  std::cout << "\nCorrecting " << misspelled_indices.size() << " misspelled word(s)...\n";
+  std::cout << "Enter number to apply to current word, 'a' for all remaining, 'n' for next, 'k' to keep original, 'q' to quit.\n\n";
   
-  std::string response;
-  if (!std::getline(std::cin, response)) return;
+  size_t current_idx = 0;
+  int last_choice = -1;
   
-  response = trim(response);
-  
-  if (response == "q" || response == "quit") {
-    std::cout << "Cancelled.\n";
-    return;
-  }
-  
-  if (response == "k" || response == "keep") {
-    std::cout << "Keeping original.\n";
-    return;
-  }
-  
-  int choice = -1;
-  try {
-    choice = std::stoi(response);
-  } catch (...) {
-    std::cout << "Invalid input. Keeping original.\n";
-    return;
-  }
-  
-  if (choice < 1 || choice > 5) {
-    std::cout << "Invalid choice. Keeping original.\n";
-    return;
-  }
-  
-  size_t choice_idx = static_cast<size_t>(choice - 1);
-  
-  for (size_t mi = 0; mi < misspelled_indices.size(); ++mi) {
-    size_t token_idx = misspelled_indices[mi];
-    auto& suggestions = all_suggestions[mi];
-    if (choice_idx < suggestions.size()) {
-      tokens[token_idx].text = suggestions[choice_idx].word;
-      if (!tokens[token_idx].original.empty() && 
-          tokens[token_idx].original[0] >= 'A' && 
-          tokens[token_idx].original[0] <= 'Z') {
-        tokens[token_idx].text[0] = static_cast<char>(std::toupper(tokens[token_idx].text[0]));
+  while (current_idx < misspelled_indices.size()) {
+    size_t token_idx = misspelled_indices[current_idx];
+    auto& token = tokens[token_idx];
+    auto& suggestions = all_suggestions[current_idx];
+    
+    std::cout << "Word " << (current_idx + 1) << "/" << misspelled_indices.size() << ": ";
+    term_bold_red(std::cout, token.original);
+    if (!suggestions.empty()) {
+      std::cout << " [";
+      size_t show_count = std::min(suggestions.size(), size_t(5));
+      for (size_t j = 0; j < show_count; ++j) {
+        if (j > 0) std::cout << ", ";
+        std::cout << (j + 1) << ":";
+        if (!defs->lookup(suggestions[j].word).empty())
+          term_bold_yellow(std::cout, suggestions[j].word);
+        else
+          term_bold(std::cout, suggestions[j].word);
       }
+      std::cout << "]";
+    } else {
+      std::cout << " [no suggestions]";
     }
+    std::cout << ": ";
+    std::cout << std::flush;
+    
+    std::string response;
+    if (!std::getline(std::cin, response)) return;
+    
+    response = trim(response);
+    
+    if (response == "q" || response == "quit") {
+      std::cout << "Cancelled.\n";
+      return;
+    }
+    
+    if (response == "k" || response == "keep") {
+      current_idx++;
+      continue;
+    }
+    
+    if (response == "n" || response == "next") {
+      current_idx++;
+      continue;
+    }
+    
+    if (response == "a" || response == "all") {
+      if (last_choice < 0) {
+        std::cout << "  Choose a number first, then 'a' to apply to remaining.\n";
+        continue;
+      }
+      size_t choice_idx = static_cast<size_t>(last_choice);
+      while (current_idx < misspelled_indices.size()) {
+        size_t ti = misspelled_indices[current_idx];
+        auto& suggs = all_suggestions[current_idx];
+        if (choice_idx < suggs.size()) {
+          tokens[ti].text = suggs[choice_idx].word;
+          if (!tokens[ti].original.empty() && 
+              tokens[ti].original[0] >= 'A' && 
+              tokens[ti].original[0] <= 'Z') {
+            tokens[ti].text[0] = static_cast<char>(std::toupper(tokens[ti].text[0]));
+          }
+        }
+        current_idx++;
+      }
+      std::cout << "  Applied choice " << (last_choice + 1) << " to remaining words.\n";
+      break;
+    }
+    
+    int choice = -1;
+    try {
+      choice = std::stoi(response);
+    } catch (...) {
+      std::cout << "  Invalid. Enter number (1-5), 'n' next, 'k' keep, 'q' quit.\n";
+      continue;
+    }
+    
+    if (choice < 1 || choice > 5) {
+      std::cout << "  Invalid choice. Enter 1-5.\n";
+      continue;
+    }
+    
+    size_t choice_idx = static_cast<size_t>(choice - 1);
+    if (choice_idx >= suggestions.size()) {
+      std::cout << "  Not that many suggestions. Try 1-" << suggestions.size() << ".\n";
+      continue;
+    }
+    
+    token.text = suggestions[choice_idx].word;
+    if (!token.original.empty() && 
+        token.original[0] >= 'A' && 
+        token.original[0] <= 'Z') {
+      token.text[0] = static_cast<char>(std::toupper(token.text[0]));
+    }
+    std::cout << "  Applied: " << token.text << "\n";
+    last_choice = static_cast<int>(choice_idx);
+    current_idx++;
   }
   
-  std::cout << "Corrected: \"";
+  std::cout << "\nCorrected: \"";
   for (const auto& token : tokens) {
     std::cout << token.text;
   }
@@ -376,6 +372,9 @@ bool is_correct_command(const std::string& line, std::string& out_sentence) {
     out_sentence = trim(t.substr(8));
     return !out_sentence.empty();
   }
+  if (lower.size() >= 7 && lower.substr(0, 7) == "rework ") {
+    return false;
+  }
   if (t.find(' ') != std::string::npos) {
     size_t word_count = 0;
     std::string word;
@@ -389,6 +388,191 @@ bool is_correct_command(const std::string& line, std::string& out_sentence) {
     }
   }
   return false;
+}
+
+bool is_rework_command(const std::string& line, std::string& out_sentence) {
+  std::string t = trim(line);
+  if (t.empty()) return false;
+  std::string lower = to_lower(t);
+  if (lower.size() > 7 && lower.substr(0, 7) == "rework ") {
+    out_sentence = trim(t.substr(7));
+    return !out_sentence.empty();
+  }
+  return false;
+}
+
+struct ReworkWord {
+  std::string original;
+  std::string typed;
+  bool correct;
+};
+
+void run_rework_mode(const std::string& sentence,
+                     spell::SpellEngine* engine,
+                     spell::DefinitionStore* defs) {
+  std::vector<std::string> original_words = split_into_words(sentence);
+  
+  if (original_words.empty()) {
+    std::cout << "No text to rework.\n";
+    return;
+  }
+  
+  std::vector<ReworkWord> rework_words;
+  for (const auto& w : original_words) {
+    ReworkWord rw;
+    rw.original = w;
+    rw.typed = "";
+    rw.correct = false;
+    rework_words.push_back(rw);
+  }
+  
+  size_t current_word_idx = 0;
+  
+  std::cout << "\nRework: \"" << sentence << "\"\n";
+  std::cout << "─────────────────────────────────\n";
+  std::cout << "Type the sentence (Space to confirm word, Enter when complete, Ctrl+C to cancel):\n\n";
+  
+  while (current_word_idx < rework_words.size()) {
+    for (size_t i = 0; i < rework_words.size(); ++i) {
+      if (i > 0) std::cout << " ";
+      if (i == current_word_idx) {
+        std::cout << "[";
+      }
+      if (rework_words[i].correct) {
+        std::cout << rework_words[i].original;
+      } else if (!rework_words[i].typed.empty()) {
+        term_bold_red(std::cout, rework_words[i].typed);
+      } else {
+        std::cout << rework_words[i].original;
+      }
+      if (i == current_word_idx) {
+        std::cout << "]";
+      }
+    }
+    std::cout << "\n";
+    
+    if (current_word_idx < rework_words.size()) {
+      auto& current = rework_words[current_word_idx];
+      std::string lower = to_lower_word(current.typed);
+      if (!lower.empty() && !engine->is_correct(lower)) {
+        auto suggestions = engine->suggest(lower);
+        if (!suggestions.empty()) {
+          std::cout << "  Suggestions: ";
+          size_t show_count = std::min(suggestions.size(), size_t(5));
+          for (size_t j = 0; j < show_count; ++j) {
+            if (j > 0) std::cout << ", ";
+            std::cout << (j + 1) << ":";
+            if (!defs->lookup(suggestions[j].word).empty())
+              term_bold_yellow(std::cout, suggestions[j].word);
+            else
+              term_bold(std::cout, suggestions[j].word);
+          }
+          std::cout << "\n";
+          Definition d = defs->lookup(suggestions[0].word);
+          if (!d.empty()) {
+            std::cout << "  Definition: ";
+            term_print_definition(std::cout, d);
+          }
+        }
+      }
+    }
+    
+    std::cout << "\n> " << std::flush;
+    
+    std::string input;
+    if (!std::getline(std::cin, input)) {
+      std::cout << "\nCancelled.\n";
+      return;
+    }
+    
+    if (input.empty()) {
+      continue;
+    }
+    
+    if (input == "\x03" || input == "\x1b") {
+      std::cout << "\nCancelled.\n";
+      return;
+    }
+    
+    if (input == "\t") {
+      if (current_word_idx < rework_words.size()) {
+        auto& current = rework_words[current_word_idx];
+        std::string lower = to_lower_word(current.typed);
+        auto suggestions = engine->suggest(lower);
+        if (!suggestions.empty()) {
+          current.typed = suggestions[0].word;
+        }
+      }
+      continue;
+    }
+    
+    if (input == "\n" || input == "\r") {
+      if (current_word_idx < rework_words.size()) {
+        auto& current = rework_words[current_word_idx];
+        std::string lower = to_lower_word(current.typed);
+        if (current.typed.empty()) {
+          if (engine->is_correct(to_lower_word(current.original))) {
+            current.correct = true;
+            current_word_idx++;
+          }
+        } else if (engine->is_correct(lower)) {
+          current.original = current.typed;
+          current.correct = true;
+          current_word_idx++;
+        } else {
+          auto suggestions = engine->suggest(lower);
+          if (!suggestions.empty()) {
+            current.original = suggestions[0].word;
+            current.typed = suggestions[0].word;
+            current.correct = true;
+            current_word_idx++;
+          } else {
+            current.correct = true;
+            current_word_idx++;
+          }
+        }
+      }
+      if (current_word_idx >= rework_words.size()) {
+        break;
+      }
+      continue;
+    }
+    
+    if (input == " " || input == "  ") {
+      if (current_word_idx < rework_words.size()) {
+        auto& current = rework_words[current_word_idx];
+        std::string lower = to_lower_word(current.typed);
+        if (engine->is_correct(lower)) {
+          current.original = current.typed;
+          current.correct = true;
+          current_word_idx++;
+        } else {
+          auto suggestions = engine->suggest(lower);
+          if (!suggestions.empty()) {
+            current.original = suggestions[0].word;
+            current.typed = suggestions[0].word;
+            current.correct = true;
+            current_word_idx++;
+          } else {
+            current.correct = true;
+            current_word_idx++;
+          }
+        }
+      }
+      continue;
+    }
+    
+    if (current_word_idx < rework_words.size()) {
+      rework_words[current_word_idx].typed += input;
+    }
+  }
+  
+  std::cout << "\nCorrected: \"";
+  for (size_t i = 0; i < rework_words.size(); ++i) {
+    if (i > 0) std::cout << " ";
+    std::cout << (rework_words[i].correct ? rework_words[i].original : rework_words[i].typed);
+  }
+  std::cout << "\"\n";
 }
 
 }  // namespace
@@ -524,6 +708,19 @@ int run_repl(const ReplConfig& config) {
         continue;
       }
       correct_sentence(sentence, engine.get(), defs.get());
+      continue;
+    }
+
+    if (is_rework_command(line, sentence)) {
+      if (!engine || !engine->is_loaded()) {
+#ifndef SPELL_HAS_HUNSPELL
+        std::cout << "(spell check unavailable — build has no Hunspell; install libhunspell-dev and rebuild)\n";
+#else
+        std::cout << "(no dictionary — use 'load PATH', --dict-dir, or set dict_dir in ~/.config/spell/config)\n";
+#endif
+        continue;
+      }
+      run_rework_mode(sentence, engine.get(), defs.get());
       continue;
     }
 

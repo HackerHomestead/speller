@@ -233,6 +233,7 @@ spell> :q
 | `dict` | Show current dictionary path |
 | `define WORD`, `def WORD` | Show definition for WORD (from glossary). After "Did you mean …?", **Tab** cycles through suggested words to complete `def` / `define`. |
 | `correct TEXT` | Correct a sentence interactively (word-by-word) |
+| `rework TEXT` | Rework mode: retype sentence to build muscle memory |
 | `SENTENCE` | Any multi-word input is automatically treated as a sentence to correct |
 | `quit`, `exit`, `:q` | Exit the REPL |
 
@@ -270,6 +271,78 @@ Corrected: "This sentence has two errors"
 - Enter a number (1-5) to apply that suggestion to all misspelled words
 - `k` or `keep` to keep the original text unchanged
 - `q` or `quit` to cancel
+
+---
+
+### Rework Mode — Retype to Learn
+
+Rework is a **learning-focused correction method** that reinforces correct spelling through active retype. Instead of passively accepting corrections, you actively rewrite the text, building muscle memory for correct spelling.
+
+#### Why Rework Works
+
+1. **Active Learning**: Research shows that actively producing correct output (retrieval practice) strengthens memory more than passive review.
+
+2. **Muscle Memory**: By physically typing the correct spelling, your fingers learn the correct pattern. This is particularly effective for words you frequently misspell.
+
+3. **Immediate Feedback**: The red highlighting gives instant feedback when you make a mistake, allowing you to self-correct before bad habits form.
+
+4. **Deliberate Practice**: Focusing on each word individually forces attention on problem areas, unlike auto-correct which can let you skim.
+
+5. **Retention**: Studies on spelling improvement show that writing practice with immediate correction produces long-term retention better than passive review.
+
+#### How Rework Works
+
+1. The original text is shown at the top
+2. You retype the sentence from scratch
+3. As you type:
+   - **Correct letters** appear normal
+   - **Misspelled words** turn **bold red**
+   - **Suggestions** appear in **bold yellow** below
+4. **Tab** cycles through suggestions with definitions shown
+5. Keep typing until all words turn green (correct)
+6. The corrected sentence is shown upon completion
+
+**Example:**
+
+```
+spell> rework I haev a probelm
+
+Rework: "I haev a probelm"
+─────────────────────────────────
+Type the sentence again:
+
+I haev a probelm    ← RED (misspelled)
+   ↑
+
+Suggestions: 1:have 2:head 3:heat
+Definitions: have (v.) possess, own
+
+[Type 'have' or press Tab to accept suggestion]
+I have a probelm    ← RED
+
+I have a problem   ← All correct! ✓
+
+Corrected: "I have a problem"
+```
+
+#### Rework Commands
+
+| Key/Input | Action |
+|-----------|--------|
+| `Tab` | Cycle through suggestions for current word |
+| `Enter` | Accept current suggestion and move on |
+| `Ctrl+C` | Cancel and exit rework |
+| `Space` | If word is correct, move to next word |
+
+#### Benefits
+
+- **Builds lasting muscle memory** for correct spelling
+- **Identifies patterns** in your common misspellings
+- **Engages active learning** rather than passive correction
+- **Slower pace** allows deliberate attention to each word
+- **Effective for learning** new vocabulary or foreign words
+
+**Best Practice**: Use rework when you encounter a word you frequently misspell. After 3-5 correct retypes, the muscle memory effect kicks in.
 
 **Default:** Bundled `en_US` dictionary (`data/dict/`) is used when no `--dict-dir` is given.
 

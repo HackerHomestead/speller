@@ -246,60 +246,118 @@ void correct_sentence(const std::string& sentence,
       }
     }
   }
-  std::cout << "\n\n";
+  std::cout << "\n";
   
   if (misspelled_indices.empty()) {
     std::cout << "All words are spelled correctly!\n";
     return;
   }
   
-  std::cout << "Enter number to replace misspelled word(s), 'k' to keep original, or 'q' to quit: ";
-  std::cout << std::flush;
+  std::cout << "\nCorrecting " << misspelled_indices.size() << " misspelled word(s)...\n";
+  std::cout << "Enter number to apply to current word, 'a' for all remaining, 'n' for next, 'k' to keep original, 'q' to quit.\n\n";
   
-  std::string response;
-  if (!std::getline(std::cin, response)) return;
+  size_t current_idx = 0;
+  int last_choice = -1;
   
-  response = trim(response);
-  
-  if (response == "q" || response == "quit") {
-    std::cout << "Cancelled.\n";
-    return;
-  }
-  
-  if (response == "k" || response == "keep") {
-    std::cout << "Keeping original.\n";
-    return;
-  }
-  
-  int choice = -1;
-  try {
-    choice = std::stoi(response);
-  } catch (...) {
-    std::cout << "Invalid input. Keeping original.\n";
-    return;
-  }
-  
-  if (choice < 1 || choice > 5) {
-    std::cout << "Invalid choice. Keeping original.\n";
-    return;
-  }
-  
-  size_t choice_idx = static_cast<size_t>(choice - 1);
-  
-  for (size_t mi = 0; mi < misspelled_indices.size(); ++mi) {
-    size_t token_idx = misspelled_indices[mi];
-    auto& suggestions = all_suggestions[mi];
-    if (choice_idx < suggestions.size()) {
-      tokens[token_idx].text = suggestions[choice_idx].word;
-      if (!tokens[token_idx].original.empty() && 
-          tokens[token_idx].original[0] >= 'A' && 
-          tokens[token_idx].original[0] <= 'Z') {
-        tokens[token_idx].text[0] = static_cast<char>(std::toupper(tokens[token_idx].text[0]));
+  while (current_idx < misspelled_indices.size()) {
+    size_t token_idx = misspelled_indices[current_idx];
+    auto& token = tokens[token_idx];
+    auto& suggestions = all_suggestions[current_idx];
+    
+    std::cout << "Word " << (current_idx + 1) << "/" << misspelled_indices.size() << ": ";
+    term_bold_red(std::cout, token.original);
+    if (!suggestions.empty()) {
+      std::cout << " [";
+      size_t show_count = std::min(suggestions.size(), size_t(5));
+      for (size_t j = 0; j < show_count; ++j) {
+        if (j > 0) std::cout << ", ";
+        std::cout << (j + 1) << ":";
+        if (!defs->lookup(suggestions[j].word).empty())
+          term_bold_yellow(std::cout, suggestions[j].word);
+        else
+          term_bold(std::cout, suggestions[j].word);
       }
+      std::cout << "]";
+    } else {
+      std::cout << " [no suggestions]";
     }
+    std::cout << ": ";
+    std::cout << std::flush;
+    
+    std::string response;
+    if (!std::getline(std::cin, response)) return;
+    
+    response = trim(response);
+    
+    if (response == "q" || response == "quit") {
+      std::cout << "Cancelled.\n";
+      return;
+    }
+    
+    if (response == "k" || response == "keep") {
+      current_idx++;
+      continue;
+    }
+    
+    if (response == "n" || response == "next") {
+      current_idx++;
+      continue;
+    }
+    
+    if (response == "a" || response == "all") {
+      if (last_choice < 0) {
+        std::cout << "  Choose a number first, then 'a' to apply to remaining.\n";
+        continue;
+      }
+      size_t choice_idx = static_cast<size_t>(last_choice);
+      while (current_idx < misspelled_indices.size()) {
+        size_t ti = misspelled_indices[current_idx];
+        auto& suggs = all_suggestions[current_idx];
+        if (choice_idx < suggs.size()) {
+          tokens[ti].text = suggs[choice_idx].word;
+          if (!tokens[ti].original.empty() && 
+              tokens[ti].original[0] >= 'A' && 
+              tokens[ti].original[0] <= 'Z') {
+            tokens[ti].text[0] = static_cast<char>(std::toupper(tokens[ti].text[0]));
+          }
+        }
+        current_idx++;
+      }
+      std::cout << "  Applied choice " << (last_choice + 1) << " to remaining words.\n";
+      break;
+    }
+    
+    int choice = -1;
+    try {
+      choice = std::stoi(response);
+    } catch (...) {
+      std::cout << "  Invalid. Enter number (1-5), 'n' next, 'k' keep, 'q' quit.\n";
+      continue;
+    }
+    
+    if (choice < 1 || choice > 5) {
+      std::cout << "  Invalid choice. Enter 1-5.\n";
+      continue;
+    }
+    
+    size_t choice_idx = static_cast<size_t>(choice - 1);
+    if (choice_idx >= suggestions.size()) {
+      std::cout << "  Not that many suggestions. Try 1-" << suggestions.size() << ".\n";
+      continue;
+    }
+    
+    token.text = suggestions[choice_idx].word;
+    if (!token.original.empty() && 
+        token.original[0] >= 'A' && 
+        token.original[0] <= 'Z') {
+      token.text[0] = static_cast<char>(std::toupper(token.text[0]));
+    }
+    std::cout << "  Applied: " << token.text << "\n";
+    last_choice = static_cast<int>(choice_idx);
+    current_idx++;
   }
   
-  std::cout << "Corrected: \"";
+  std::cout << "\nCorrected: \"";
   for (const auto& token : tokens) {
     std::cout << token.text;
   }
